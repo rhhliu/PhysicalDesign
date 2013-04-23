@@ -24,6 +24,10 @@ public class GraphPath extends AbstractPath {
 	public Iterator<GraphNode> nodeIterator() {
 		return nodeList.iterator();
 	}
+	public int getCost() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 	
 

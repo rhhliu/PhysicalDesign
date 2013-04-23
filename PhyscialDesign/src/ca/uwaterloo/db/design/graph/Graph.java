@@ -110,4 +110,9 @@ public class Graph {
 		return (GraphNode) nodeMap.get(pNode.getName());
 	}
 
+	public void augment() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

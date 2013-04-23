@@ -1,11 +1,13 @@
 package ca.uwaterloo.db.design.framwork;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import ca.uwaterloo.db.design.graph.Graph;
 import ca.uwaterloo.db.design.graph.GraphBuilder;
 import ca.uwaterloo.db.design.graph.GraphPath;
 import ca.uwaterloo.db.design.graph.NoPathFoundException;
 import ca.uwaterloo.db.design.graph.SimplePath;
-import ca.uwaterloo.db.design.graph.Path;
 
 /**
  * 
@@ -15,24 +17,48 @@ import ca.uwaterloo.db.design.graph.Path;
 public class Main {
 	public static void main(String[] args) {
 		Graph graph = GraphBuilder.buildInitGraph();
-		WorkLoad workLoad = new WorkLoad();
+		Set<Query> querySet = WorkLoadBuilder.buildWorkLoads();
 
-		SimplePath p1 = new SimplePath("uid:following:uid:tweet:tid:body:body");
-		SimplePath p2 = new SimplePath("uid:following:uid:tweet:tid:ts:ts");
-		workLoad.addPath(p1);
+		Set<GraphPath> gpSet = new HashSet<>(), resultSet = null;
 
-		GraphPath mp1 = null, mp2 = null;
+		int minTotalCost = Integer.MAX_VALUE;
+
 		try {
-			mp1 = graph.getMinCostPath(p1, graph);
-			mp2 = graph.getMinCostPath(p2, graph);
-			
+
+			while (true) {
+				for (Query query : querySet) {
+					for (SimplePath p : query.getPathList()) {
+						GraphPath minCostGP = graph.getMinCostPath(p, graph);
+						gpSet.add(minCostGP);
+					}
+				}
+
+				// calculate total cost
+				int totalCost = 0;
+				for (GraphPath gp : gpSet) {
+					totalCost += gp.getCost();
+				}
+
+				if (totalCost >= minTotalCost)
+					break;
+
+				minTotalCost = totalCost;
+				resultSet = new HashSet<>(gpSet);
+				
+				graph.augment();
+			}
+
 		} catch (NoPathFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		System.out.println(mp1);
-		System.out.println(mp2);
+		//output
+		if (resultSet != null){
+			for (GraphPath gp : resultSet) {
+				System.out.println(gp);
+			}
+		}
 
 	}
 }
