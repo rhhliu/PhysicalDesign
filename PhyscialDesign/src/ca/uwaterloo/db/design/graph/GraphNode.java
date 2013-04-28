@@ -22,10 +22,26 @@ public class GraphNode extends Node {
 		super(name);
 		// TODO Auto-generated constructor stub
 	}
+	
+	/**
+	 * Copy constructor
+	 * @param gnode
+	 */
+	public GraphNode(GraphNode gnode) {
+		super(gnode.name);
+		// String, include name, are not duplicated. Only node and edge is duplicated.
+		
+		
+	}
 	public void addAdj(String edgeName, Node node) {
 		GraphEdge edge = new GraphEdge(edgeName, this, node);
 		outEdges.put(edgeName, edge);
 		
+	}
+	
+	public void addAdj(Edge edge){
+		GraphEdge graphEdge = (GraphEdge) edge;
+		outEdges.put(graphEdge.getName(), graphEdge);
 	}
 	
 	public HashMap<String, GraphEdge> getOutEdges() {
@@ -42,5 +58,23 @@ public class GraphNode extends Node {
 		
 	}
 	
+	public static GraphNode mergeNodes(GraphNode n1, GraphNode n2){
+		
+		GraphNode newNode = new GraphNode(n1.getName() + "," + n2.getName());
+		
+		newNode.outEdges.putAll(n1.getOutEdges());
+		newNode.outEdges.putAll(n2.getOutEdges());
+		
+		
+		
+		return newNode;
+	}
+	
+	public void putAdjNode(GraphEdge edge, GraphNode node){
+		edgeNodeMap.put(edge, node);
+	}
+	public GraphNode getAdjNode(GraphEdge edge) {
+		return (GraphNode) edgeNodeMap.get(edge);
+	}
 	
 }

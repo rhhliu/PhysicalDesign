@@ -49,4 +49,12 @@ public class PathNode extends Node {
 		
 	}
 
+	@Override
+	public void addAdj(Edge edge) {
+		this.outEdge = (PathEdge) edge;
+		
+	}
+	public PathNode getAdjNode(Edge edge) {
+		return (PathNode) edgeNodeMap.get(edge);
+	}
 }

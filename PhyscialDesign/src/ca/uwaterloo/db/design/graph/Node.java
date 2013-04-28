@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class Node {
 	protected String name;
+	protected HashMap<Edge, Node> edgeNodeMap = new HashMap<>();
 	
 	public Node(String name) {
 		this.name = name;
@@ -44,6 +45,7 @@ public abstract class Node {
 	 * @param node
 	 */
 	public abstract void addAdj(String edgeName, Node node) ;
+	public abstract void addAdj(Edge edge);
 
 
 	public abstract Edge getEdge(String edgeName) ;
@@ -61,6 +63,13 @@ public abstract class Node {
 	
 	public String toString(){
 		return name;
+	}
+
+	public void putAdjNode(Edge edge, Node node){
+		edgeNodeMap.put(edge, node);
+	}
+	public Node getAdjNode(Edge edge) {
+		return edgeNodeMap.get(edge);
 	}
 
 }

@@ -20,14 +20,27 @@ public class GraphEdge extends Edge{
 	/**
 	 * 
 	 */
-	public GraphEdge(String name, Node from, Node to) {
-		super(name, from, to);
+	public GraphEdge(String name, Node node1, Node node2) {
+		super(name, node1, node2);
 		List<String> list = new LinkedList<>();
 		list.add(name);
-		EdgeChain chain = new EdgeChain(list, to);
+		EdgeChain chain = new EdgeChain(list, node2);
 		chainSet.add(chain);
 	}
 	
+	public GraphEdge(GraphEdge e) {
+		super(e.getName(), null, null);
+		
+	}
+
+	public GraphEdge(String name) {
+		super(name, null, null);
+	}
+	
+	public GraphNode getNode2() {
+		return (GraphNode) node2;
+	}
+
 	@Override
 	public String getName() {
 		Iterator<EdgeChain> pit = chainSet.iterator();
@@ -40,17 +53,18 @@ public class GraphEdge extends Edge{
 		return psb.toString();
 	}
 	
-	public GraphNode getTo() {
-		return (GraphNode)to;
-	}
+//	public GraphNode getTo() {
+//		return (GraphNode)node2;
+//	}
 	/**
 	 * Match 
-	 * @param pEdge
+	 * @param gNode 
+	 * @param pNode.getOutEdge()
 	 * @return
 	 */
 	@Override
-	public PathNode match(PathEdge pEdge) {
-		if (pEdge == null) return null;
+	public PathNode match(GraphNode gNode, PathNode pNode) {
+		if (pNode.getOutEdge() == null) return null;
 		
 		PathNode lastMatchedPathNode = null;
 		int maxLen = 0;
@@ -60,7 +74,7 @@ public class GraphEdge extends Edge{
 			EdgeChain ed = csit.next();
 			
 			Iterator<String> lableItrator = ed.getLableIterator();
-			PathEdge curEdge= pEdge;
+			PathEdge curEdge= pNode.getOutEdge();
 			PathNode matchedToPNode = null;
 			
 			int len = 0;
@@ -72,7 +86,7 @@ public class GraphEdge extends Edge{
 					break;
 				}
 				len ++;
-				matchedToPNode = curEdge.getTo();
+				matchedToPNode = pNode.getAdjNode(curEdge);//curEdge.getTo();
 				curEdge = curEdge.getNextEdge();
 			}
 			
@@ -87,6 +101,19 @@ public class GraphEdge extends Edge{
 		}
 		
 		return lastMatchedPathNode;
+	}
+
+	public static GraphEdge mergeEdge(GraphEdge e1, GraphEdge e2) {
+		GraphEdge newEdge = new GraphEdge(e1.getName() + "|" + e2.getName());
+		newEdge.chainSet.addAll(e1.chainSet);
+		newEdge.chainSet.addAll(e2.chainSet);
+		return newEdge;
+	}
+
+	public static GraphEdge concantinate(GraphEdge e1, GraphEdge e2, GraphNode startNode, GraphNode endNode) {
+		
+		GraphEdge newEdge = new GraphEdge(e1.getName() + "_" + e2.getName(), startNode, endNode);
+		return newEdge;
 	}
 
 	

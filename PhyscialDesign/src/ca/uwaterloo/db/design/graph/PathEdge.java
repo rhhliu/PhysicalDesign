@@ -23,15 +23,7 @@ public class PathEdge extends Edge {
 		super(name, from, to);
 	}
 
-	@Override
-	public PathNode getFrom() {
-		return (PathNode)super.getFrom();
-	}
-
-	@Override
-	public PathNode getTo() {
-		return (PathNode)super.getTo();
-	}
+	
 
 	
 	public Node match(Edge pEdge) {
@@ -43,12 +35,28 @@ public class PathEdge extends Edge {
 		return getTo().getOutEdge();
 	}
 
-	@Override
-	public Node match(PathEdge pEdge) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public PathNode getFrom() {
+		return (PathNode) node1;
 	}
+	public void setFrom(PathNode from) {
+		this.node1 = from;
+	}
+	public PathNode getTo() {
+		return (PathNode) node2;
+	}
+	public void setTo(Node to) {
+		this.node2 = to;
+	}
+
 	
-	
+
+
+	@Override
+	public PathNode match(GraphNode gNode, PathNode pNode) {
+		throw new UnsupportedOperationException();
+	}
+
+
 
 }

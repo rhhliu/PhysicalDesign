@@ -30,6 +30,13 @@ public class Query {
 		
 	}
 	
+	/**
+	 * @return the weight
+	 */
+	public double getWeight() {
+		return weight;
+	}
+
 	public List<SimplePath> getPathList(){
 		return pathList;
 	}

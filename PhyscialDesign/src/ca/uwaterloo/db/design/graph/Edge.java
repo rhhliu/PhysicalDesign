@@ -12,27 +12,48 @@ public abstract class Edge {
 	static final String CONCAT_SEPERATOR	=	"^";
 	static final String MERGE_SEPERATOR		=	"|";
 	
-	private Node from;
-	protected Node to;
+	protected Node node1, node2;
 	private int fromCardinality, toCardinality;
 	private String name;
-	public Edge(String name, Node from, Node to) {
+	public Edge(String name, Node ndoe1, Node node2) {
 		this.name = name;
-		this.to= to;
-		this.from = from;
+		this.node2= node2;
+		this.node1 = ndoe1;
 	}
-	public Node getFrom() {
-		return from;
+	
+	/**
+	 * @return the node1
+	 */
+	public Node getNode1() {
+		return node1;
 	}
-	public void setFrom(Node from) {
-		this.from = from;
+
+	/**
+	 * @param node1 the node1 to set
+	 */
+	public void setNode1(Node node1) {
+		this.node1 = node1;
+		node1.edgeNodeMap.put(this, node1);
+		node1.addAdj(this);
+	
 	}
-	public Node getTo() {
-		return to;
+
+	/**
+	 * @return the node2
+	 */
+	public Node getNode2() {
+		return node2;
 	}
-	public void setTo(Node to) {
-		this.to = to;
+
+	/**
+	 * @param node2 the node2 to set
+	 */
+	public void setNode2(Node node2) {
+		this.node2 = node2;
+		node2.edgeNodeMap.put(this, node2);
+		node2.addAdj(this);
 	}
+
 	public int getFromCardinality() {
 		return fromCardinality;
 	}
@@ -64,5 +85,7 @@ public abstract class Edge {
 		return null;
 	}
 
-	public abstract Node match(PathEdge pEdge);
+
+
+	public abstract PathNode match(GraphNode gNode, PathNode pNode) ;
 }
