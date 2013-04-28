@@ -25,6 +25,8 @@ public class WorkLoadBuilder {
 		workLoad.addPath(p1);
 		workLoad.addPath(p2);
 		workLoad.setWeight(0.8);
+		
+		workLoadSet.add(workLoad);
 		return workLoadSet;
 	}
 }

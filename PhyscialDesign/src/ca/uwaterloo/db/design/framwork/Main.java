@@ -45,7 +45,7 @@ public class Main {
 				minTotalCost = totalCost;
 				resultSet = new HashSet<>(gpSet);
 				
-				graph.augment();
+				//graph.augment();
 			}
 
 		} catch (NoPathFoundException e) {

@@ -36,12 +36,16 @@ public class GraphNode extends Node {
 	public void addAdj(String edgeName, Node node) {
 		GraphEdge edge = new GraphEdge(edgeName, this, node);
 		outEdges.put(edgeName, edge);
+		putAdjNode(edge, node);
 		
 	}
 	
 	public void addAdj(Edge edge){
 		GraphEdge graphEdge = (GraphEdge) edge;
 		outEdges.put(graphEdge.getName(), graphEdge);
+		GraphNode endNode = (graphEdge.getNode1() == this)? graphEdge.getNode2() : graphEdge.getNode1();
+		putAdjNode(edge, endNode);
+		endNode.putAdjNode(graphEdge, this);
 	}
 	
 	public HashMap<String, GraphEdge> getOutEdges() {

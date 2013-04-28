@@ -25,7 +25,7 @@ public class GraphBuilder {
 		tid.addAdj("ts", tsNode);
 		
 		uid.addAdj("following", uid);
-		uid.addAdj("follower", uid);
+		//uid.addAdj("follower", uid);
 		
 		Graph graph = new Graph();
 		graph.add(uid);

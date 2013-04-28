@@ -45,11 +45,23 @@ public class PathEdge extends Edge {
 	public PathNode getTo() {
 		return (PathNode) node2;
 	}
-	public void setTo(Node to) {
+	public void setTo(PathNode to) {
 		this.node2 = to;
 	}
 
+	/**
+	 * @return the node1
+	 */
+	public PathNode getNode1() {
+		return (PathNode) node1;
+	}
 	
+	/**
+	 * @return the node2
+	 */
+	public PathNode getNode2() {
+		return (PathNode) node2;
+	}
 
 
 	@Override

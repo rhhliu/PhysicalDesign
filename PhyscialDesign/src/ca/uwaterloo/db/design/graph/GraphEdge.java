@@ -37,6 +37,10 @@ public class GraphEdge extends Edge{
 		super(name, null, null);
 	}
 	
+	public GraphNode getNode1() {
+		return (GraphNode) node1;
+	}
+	
 	public GraphNode getNode2() {
 		return (GraphNode) node2;
 	}
@@ -52,6 +56,8 @@ public class GraphEdge extends Edge{
 		}
 		return psb.toString();
 	}
+	
+	
 	
 //	public GraphNode getTo() {
 //		return (GraphNode)node2;
