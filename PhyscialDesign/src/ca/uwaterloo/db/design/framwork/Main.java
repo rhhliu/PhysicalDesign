@@ -15,6 +15,8 @@ import ca.uwaterloo.db.design.graph.SimplePath;
  *         PhyscialDesign
  */
 public class Main {
+	public static boolean DEBUG = true;
+	
 	public static void main(String[] args) {
 		Graph graph = GraphBuilder.buildInitGraph();
 		Set<Query> querySet = WorkLoadBuilder.buildWorkLoads();
@@ -24,7 +26,7 @@ public class Main {
 		int minTotalCost = Integer.MAX_VALUE;
 
 		try {
-
+			int count = 0;
 			while (true) {
 				for (Query query : querySet) {
 					for (SimplePath p : query.getPathList()) {
@@ -39,13 +41,14 @@ public class Main {
 					totalCost += gp.getCost();
 				}
 
-				if (totalCost >= minTotalCost)
+				if (totalCost >= minTotalCost || count++ > 0)
 					break;
 
 				minTotalCost = totalCost;
 				resultSet = new HashSet<>(gpSet);
+				gpSet.clear();
 				
-				//graph.augment();
+				graph.augment();
 			}
 
 		} catch (NoPathFoundException e) {

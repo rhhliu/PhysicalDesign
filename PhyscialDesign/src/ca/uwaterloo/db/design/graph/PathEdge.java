@@ -19,8 +19,10 @@ public class PathEdge extends Edge {
 	 * @param from
 	 * @param to
 	 */
-	public PathEdge(String name, Node from, Node to) {
-		super(name, from, to);
+	public PathEdge(String name, PathNode from, PathNode to) {
+		this.name = name;
+		setFrom(from);
+		setTo(to);
 	}
 
 	

@@ -25,7 +25,7 @@ public class PathNode extends Node {
 	}
 	
 	public void addAdj(String edgeName, Node node) {
-		outEdge = new PathEdge(edgeName, this, node);
+		outEdge = new PathEdge(edgeName, this, (PathNode)node);
 		putAdjNode(outEdge, node);
 		node.putAdjNode(outEdge, this);
 	}
@@ -58,7 +58,8 @@ public class PathNode extends Node {
 		
 		PathNode endNode = (outEdge.getNode1() == this)? outEdge.getNode2() : outEdge.getNode1();
 		putAdjNode(edge, endNode);
-		endNode.putAdjNode(outEdge, this);
+		if (endNode != null && endNode.getAdjNode(outEdge)!= this)
+			endNode.putAdjNode(outEdge, this);
 		
 	}
 	public PathNode getAdjNode(Edge edge) {

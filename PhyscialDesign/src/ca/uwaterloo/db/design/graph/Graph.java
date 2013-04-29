@@ -1,5 +1,6 @@
 package ca.uwaterloo.db.design.graph;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,17 +33,28 @@ public class Graph {
 		
 		
 		if (visited.contains(n)){
-			return null;
+			return nodeMap.get(n.getName());
 		}else{
 			GraphNode nn = new GraphNode(n);
+			visited.add(n);
 			nodeMap.put(nn.name, nn);
 			for(GraphEdge e : n.getOutEdges().values()){
 				GraphEdge ee = new GraphEdge(e);
-				ee.setNode1(nn);
 				
-				GraphNode copiedNode2 = dfsClone(e.getNode2(), visited);
-				if (copiedNode2 != null) 
-					ee.setNode2(copiedNode2);
+				
+				if (e.getNode1() == n){
+					ee.setNode1(nn);
+					GraphNode copiedNode2 = dfsClone(e.getNode2(), visited);
+					if (copiedNode2 != null) 
+						ee.setNode2(copiedNode2);
+				}else{
+					ee.setNode2(nn);
+					GraphNode copiedNode1 = dfsClone(e.getNode1(), visited);
+					if (copiedNode1 != null) 
+						ee.setNode1(copiedNode1);
+				}
+				
+				
 				
 			}
 			
@@ -183,9 +195,12 @@ public class Graph {
 
 	private void mergeEdges(GraphNode n) {
 		Collection<GraphEdge> edges = (Collection<GraphEdge>) n.getOutEdges().values();
+		//make a snapshot of edges to avoid concurrent modification issue
+		//, Because new edges will be added 
+		List<GraphEdge> edgeList = new ArrayList<>(edges); 
 		
-		for (GraphEdge e1 : edges) {
-			for (GraphEdge e2 : edges) {
+		for (GraphEdge e1 : edgeList) {
+			for (GraphEdge e2 : edgeList) {
 				if (e1 == e2) continue;
 				
 				// Generated new end node
@@ -216,17 +231,31 @@ public class Graph {
 	 * @param g 
 	 */
 	private void inline(Graph g){
+		HashSet<GraphEdge> visitedEdge = new HashSet<>();
+		
 		for (GraphNode n : g.nodeMap.values()) {
 			@SuppressWarnings("unchecked")
 			Collection<GraphEdge> edges = (Collection<GraphEdge>) n.getOutEdges().values();
-			for (GraphEdge e1 : edges) {
+			// make a snapshot
+			List<GraphEdge> edgeList = new ArrayList<>(edges);
+			
+			for (GraphEdge e1 : edgeList) {
+				
+				if (visitedEdge.contains(e1)) 
+					continue;
+				
+				visitedEdge.add(e1);
+				
 				// get the other end of node other than n.
 				GraphNode to = n.getAdjNode(e1);
 				
-				for(GraphEdge e2 : to.outEdges.values()){
+				Collection<GraphEdge> edges2 = to.outEdges.values();
+				// make a snapshot
+				List<GraphEdge> edgeList2 = new ArrayList<>(edges2);
+				for(GraphEdge e2 : edgeList2){
+					if (e1 == e2) continue;
 					GraphNode endNode = to.getAdjNode(e2);
 					GraphEdge newEdge = GraphEdge.concantinate(e1,e2, n, endNode);
-					endNode.addAdj(newEdge);
 				}
 			}
 		}

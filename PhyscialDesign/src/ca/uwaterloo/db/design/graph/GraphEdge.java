@@ -45,17 +45,17 @@ public class GraphEdge extends Edge{
 		return (GraphNode) node2;
 	}
 
-	@Override
-	public String getName() {
-		Iterator<EdgeChain> pit = chainSet.iterator();
-		StringBuilder psb = new StringBuilder();
-		while (pit.hasNext()){
-			EdgeChain chain = pit.next();
-			psb.append(chain.toString());
-			psb.append('|');
-		}
-		return psb.toString();
-	}
+//	@Override
+//	public String getName() {
+//		Iterator<EdgeChain> pit = chainSet.iterator();
+//		StringBuilder psb = new StringBuilder();
+//		while (pit.hasNext()){
+//			EdgeChain chain = pit.next();
+//			psb.append(chain.toString());
+//			psb.append('|');
+//		}
+//		return psb.toString();
+//	}
 	
 	
 	

@@ -14,11 +14,17 @@ public abstract class Edge {
 	
 	protected Node node1, node2;
 	private int fromCardinality, toCardinality;
-	private String name;
-	public Edge(String name, Node ndoe1, Node node2) {
+	protected String name;
+	public Edge(String name, Node node1, Node node2) {
 		this.name = name;
-		this.node2= node2;
-		this.node1 = ndoe1;
+		
+		setNode1(node1);
+		setNode2(node2);
+		
+	}
+	
+	protected Edge(){
+		
 	}
 	
 	/**
@@ -33,8 +39,8 @@ public abstract class Edge {
 	 */
 	public void setNode1(Node node1) {
 		this.node1 = node1;
-		node1.edgeNodeMap.put(this, node1);
-		node1.addAdj(this);
+		if (node1 != null)
+			node1.addAdj(this);
 	
 	}
 
@@ -50,8 +56,8 @@ public abstract class Edge {
 	 */
 	public void setNode2(Node node2) {
 		this.node2 = node2;
-		node2.edgeNodeMap.put(this, node2);
-		node2.addAdj(this);
+		if (node2 != null)
+			node2.addAdj(this);
 	}
 
 	public int getFromCardinality() {

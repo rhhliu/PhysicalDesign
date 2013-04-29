@@ -4,6 +4,7 @@
 package ca.uwaterloo.db.design.graph;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -43,11 +44,19 @@ public class GraphNode extends Node {
 	public void addAdj(Edge edge){
 		GraphEdge graphEdge = (GraphEdge) edge;
 		outEdges.put(graphEdge.getName(), graphEdge);
+		//print(outEdges);
 		GraphNode endNode = (graphEdge.getNode1() == this)? graphEdge.getNode2() : graphEdge.getNode1();
 		putAdjNode(edge, endNode);
-		endNode.putAdjNode(graphEdge, this);
+		if (endNode != null && endNode.getAdjNode(graphEdge) != this)
+			endNode.putAdjNode(graphEdge, this);
 	}
 	
+	private void print(HashMap<String, GraphEdge> outEdges) {
+		for (Entry<String, GraphEdge> en : outEdges.entrySet()){
+			System.out.println(en.getKey() + " => " +en.getValue() + ";   ");
+		}
+	}
+
 	public HashMap<String, GraphEdge> getOutEdges() {
 		return outEdges;
 	}
