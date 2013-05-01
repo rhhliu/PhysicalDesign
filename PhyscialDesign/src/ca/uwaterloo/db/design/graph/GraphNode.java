@@ -34,21 +34,18 @@ public class GraphNode extends Node {
 		
 		
 	}
-	public void addAdj(String edgeName, Node node) {
+	protected void addAdj(String edgeName, Node node) {
 		GraphEdge edge = new GraphEdge(edgeName, this, node);
 		outEdges.put(edgeName, edge);
-		putAdjNode(edge, node);
+		//putAdjNode(edge, node);
 		
 	}
 	
-	public void addAdj(Edge edge){
+	protected void addAdj(Edge edge){
 		GraphEdge graphEdge = (GraphEdge) edge;
 		outEdges.put(graphEdge.getName(), graphEdge);
 		//print(outEdges);
-		GraphNode endNode = (graphEdge.getNode1() == this)? graphEdge.getNode2() : graphEdge.getNode1();
-		putAdjNode(edge, endNode);
-		if (endNode != null && endNode.getAdjNode(graphEdge) != this)
-			endNode.putAdjNode(graphEdge, this);
+		//putAdjNode(edge, graphEdge.getTo());
 	}
 	
 	private void print(HashMap<String, GraphEdge> outEdges) {
@@ -61,7 +58,7 @@ public class GraphNode extends Node {
 		return outEdges;
 	}
 	
-	public Edge getEdge(String edgeName) {
+	public GraphEdge getEdge(String edgeName) {
 		return outEdges.get(edgeName);
 	}
 
@@ -83,11 +80,9 @@ public class GraphNode extends Node {
 		return newNode;
 	}
 	
-	public void putAdjNode(GraphEdge edge, GraphNode node){
-		edgeNodeMap.put(edge, node);
-	}
+
 	public GraphNode getAdjNode(GraphEdge edge) {
-		return (GraphNode) edgeNodeMap.get(edge);
+		return (GraphNode) edge.getTo();
 	}
 	
 }

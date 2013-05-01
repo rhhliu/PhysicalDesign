@@ -24,10 +24,10 @@ public class PathNode extends Node {
 		return outEdge;
 	}
 	
-	public void addAdj(String edgeName, Node node) {
+	protected void addAdj(String edgeName, Node node) {
 		outEdge = new PathEdge(edgeName, this, (PathNode)node);
-		putAdjNode(outEdge, node);
-		node.putAdjNode(outEdge, this);
+		//putAdjNode(outEdge, node);
+		//node.putAdjNode(outEdge, this);
 	}
 
 	@Override
@@ -45,24 +45,20 @@ public class PathNode extends Node {
 	}
 
 	
-	public void addOutEdge(PathEdge arc) {
-		addAdj(arc);
-		
-		
-	}
+//	public void addOutEdge(PathEdge arc) {
+//		addAdj(arc);
+//		
+//		
+//	}
 
 	@Override
-	public void addAdj(Edge edge) {
+	protected void addAdj(Edge edge) {
 		this.outEdge = (PathEdge) edge;
-		
-		
-		PathNode endNode = (outEdge.getNode1() == this)? outEdge.getNode2() : outEdge.getNode1();
-		putAdjNode(edge, endNode);
-		if (endNode != null && endNode.getAdjNode(outEdge)!= this)
-			endNode.putAdjNode(outEdge, this);
+		//putAdjNode(edge, outEdge.getTo());
+
 		
 	}
 	public PathNode getAdjNode(Edge edge) {
-		return (PathNode) edgeNodeMap.get(edge);
+		return (PathNode) edge.getTo();
 	}
 }

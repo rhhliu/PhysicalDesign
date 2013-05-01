@@ -40,8 +40,10 @@ public class Main {
 				for (GraphPath gp : gpSet) {
 					totalCost += gp.getCost();
 				}
-
-				if (totalCost >= minTotalCost || count++ > 0)
+				
+				if (DEBUG) outputReults(gpSet);
+				
+				if (totalCost >= minTotalCost || count++ > 10)
 					break;
 
 				minTotalCost = totalCost;
@@ -56,12 +58,17 @@ public class Main {
 			e.printStackTrace();
 		}
 
+		outputReults(resultSet);
+
+	}
+
+	private static void outputReults(Set<GraphPath> resultSet) {
 		//output
+		System.out.println("---------------------");
 		if (resultSet != null){
 			for (GraphPath gp : resultSet) {
 				System.out.println(gp);
 			}
 		}
-
 	}
 }

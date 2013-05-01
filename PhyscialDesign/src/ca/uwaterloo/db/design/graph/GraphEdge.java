@@ -18,18 +18,22 @@ import java.util.Set;
 public class GraphEdge extends Edge{
 	private Set<EdgeChain> chainSet = new HashSet<>();
 	/**
-	 * 
+	 * Construct a new GraphEdge with specified simple name.
+	 * @param name simple name, which has only one name label.
 	 */
-	public GraphEdge(String name, Node node1, Node node2) {
-		super(name, node1, node2);
+	public GraphEdge(String name, Node from, Node to) {
+		super(name, from, to);
+				
 		List<String> list = new LinkedList<>();
 		list.add(name);
-		EdgeChain chain = new EdgeChain(list, node2);
+		EdgeChain chain = new EdgeChain(list, to);
 		chainSet.add(chain);
 	}
 	
+	
+	
 	public GraphEdge(GraphEdge e) {
-		super(e.getName(), null, null);
+		chainSet.addAll(e.chainSet);
 		
 	}
 
@@ -37,25 +41,29 @@ public class GraphEdge extends Edge{
 		super(name, null, null);
 	}
 	
-	public GraphNode getNode1() {
-		return (GraphNode) node1;
-	}
-	
-	public GraphNode getNode2() {
-		return (GraphNode) node2;
+
+	public GraphEdge() {
 	}
 
-//	@Override
-//	public String getName() {
-//		Iterator<EdgeChain> pit = chainSet.iterator();
-//		StringBuilder psb = new StringBuilder();
-//		while (pit.hasNext()){
-//			EdgeChain chain = pit.next();
-//			psb.append(chain.toString());
-//			psb.append('|');
-//		}
-//		return psb.toString();
-//	}
+	public GraphNode getFrom() {
+		return (GraphNode) from;
+	}
+	
+	public GraphNode getTo() {
+		return (GraphNode) to;
+	}
+
+	@Override
+	public String getName() {
+		Iterator<EdgeChain> pit = chainSet.iterator();
+		StringBuilder psb = new StringBuilder();
+		while (pit.hasNext()){
+			EdgeChain chain = pit.next();
+			psb.append(chain.toString());
+			psb.append('|');
+		}
+		return psb.toString();
+	}
 	
 	
 	
@@ -110,15 +118,45 @@ public class GraphEdge extends Edge{
 	}
 
 	public static GraphEdge mergeEdge(GraphEdge e1, GraphEdge e2) {
-		GraphEdge newEdge = new GraphEdge(e1.getName() + "|" + e2.getName());
+		
+		// 1. create new edge
+		GraphEdge newEdge = new GraphEdge();
+		
+		
+		// 2. construct the chainset of new edge
 		newEdge.chainSet.addAll(e1.chainSet);
 		newEdge.chainSet.addAll(e2.chainSet);
+		
+		// 3. connect the new edge with endpoints
+		
 		return newEdge;
 	}
 
-	public static GraphEdge concantinate(GraphEdge e1, GraphEdge e2, GraphNode startNode, GraphNode endNode) {
+	
+	/**
+	 * Construct a new graph edge by concatenating e1 and e2. The new edge
+	 * is from startNode to endNode.
+	 * 
+	 * The internal chainSet of new created graph edge is concatenation of all
+	 * combination of e1's and e2's chinaSet.
+	 * 
+	 * @param e1
+	 * @param e2
+	 */
+	public static GraphEdge concantinate(GraphEdge e1, GraphEdge e2) {
 		
-		GraphEdge newEdge = new GraphEdge(e1.getName() + "_" + e2.getName(), startNode, endNode);
+		// 1. create new edge
+		GraphEdge newEdge = new GraphEdge();
+		
+		// 2. construct the new chainSet, which is concatenation of all combination of
+		//    e1's and e2's chain set
+		for (EdgeChain ec1 : e1.chainSet){
+			for(EdgeChain ec2: e2.chainSet){
+				EdgeChain newChain = ec1.concate(ec2);
+				newEdge.chainSet.add(newChain);
+			}
+		}
+				
 		return newEdge;
 	}
 

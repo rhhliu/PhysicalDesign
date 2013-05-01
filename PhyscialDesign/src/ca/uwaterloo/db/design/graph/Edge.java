@@ -12,14 +12,18 @@ public abstract class Edge {
 	static final String CONCAT_SEPERATOR	=	"^";
 	static final String MERGE_SEPERATOR		=	"|";
 	
-	protected Node node1, node2;
+	protected Node from, to;
 	private int fromCardinality, toCardinality;
 	protected String name;
-	public Edge(String name, Node node1, Node node2) {
+	public Edge(String name, Node from, Node to) {
 		this.name = name;
-		
-		setNode1(node1);
-		setNode2(node2);
+		// TODO: potential concurrency issue
+		// this is not good for concurrency. 
+		// should not publish 'this' before the constructor is over.
+		// setFrom is called from constructor now.
+		// this is just for convenience.
+		setFrom(from);
+		setTo(to);
 		
 	}
 	
@@ -30,34 +34,33 @@ public abstract class Edge {
 	/**
 	 * @return the node1
 	 */
-	public Node getNode1() {
-		return node1;
+	public Node getFrom() {
+		return from;
 	}
 
 	/**
-	 * @param node1 the node1 to set
+	 * @param from the node1 to set
 	 */
-	public void setNode1(Node node1) {
-		this.node1 = node1;
-		if (node1 != null)
-			node1.addAdj(this);
 	
+	public void setFrom(Node from) {
+		this.from = from;
+		if (from != null)
+			from.addAdj(this);
 	}
 
 	/**
 	 * @return the node2
 	 */
-	public Node getNode2() {
-		return node2;
+	public Node getTo() {
+		return to;
 	}
 
 	/**
-	 * @param node2 the node2 to set
+	 * @param to the node2 to set
 	 */
-	public void setNode2(Node node2) {
-		this.node2 = node2;
-		if (node2 != null)
-			node2.addAdj(this);
+	public void setTo(Node to) {
+		this.to = to;
+
 	}
 
 	public int getFromCardinality() {

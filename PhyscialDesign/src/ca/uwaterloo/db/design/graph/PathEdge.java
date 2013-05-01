@@ -37,32 +37,28 @@ public class PathEdge extends Edge {
 		return getTo().getOutEdge();
 	}
 
-	
-	public PathNode getFrom() {
-		return (PathNode) node1;
-	}
+
 	public void setFrom(PathNode from) {
-		this.node1 = from;
-	}
-	public PathNode getTo() {
-		return (PathNode) node2;
+		this.from = from;
+		if (from != null) 
+			from.addAdj(this);
 	}
 	public void setTo(PathNode to) {
-		this.node2 = to;
+		this.to = to;
 	}
 
 	/**
-	 * @return the node1
+	 * @return the from
 	 */
-	public PathNode getNode1() {
-		return (PathNode) node1;
+	public PathNode getFrom() {
+		return (PathNode) from;
 	}
 	
 	/**
-	 * @return the node2
+	 * @return the to
 	 */
-	public PathNode getNode2() {
-		return (PathNode) node2;
+	public PathNode getTo() {
+		return (PathNode) to;
 	}
 
 

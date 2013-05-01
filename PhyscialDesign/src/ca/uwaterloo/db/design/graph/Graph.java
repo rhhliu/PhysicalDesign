@@ -42,16 +42,16 @@ public class Graph {
 				GraphEdge ee = new GraphEdge(e);
 				
 				
-				if (e.getNode1() == n){
-					ee.setNode1(nn);
-					GraphNode copiedNode2 = dfsClone(e.getNode2(), visited);
+				if (e.getFrom() == n){
+					ee.setFrom(nn);
+					GraphNode copiedNode2 = dfsClone(e.getTo(), visited);
 					if (copiedNode2 != null) 
-						ee.setNode2(copiedNode2);
+						ee.setTo(copiedNode2);
 				}else{
-					ee.setNode2(nn);
-					GraphNode copiedNode1 = dfsClone(e.getNode1(), visited);
+					ee.setTo(nn);
+					GraphNode copiedNode1 = dfsClone(e.getFrom(), visited);
 					if (copiedNode1 != null) 
-						ee.setNode1(copiedNode1);
+						ee.setFrom(copiedNode1);
 				}
 				
 				
@@ -194,26 +194,33 @@ public class Graph {
 	}
 
 	private void mergeEdges(GraphNode n) {
-		Collection<GraphEdge> edges = (Collection<GraphEdge>) n.getOutEdges().values();
-		//make a snapshot of edges to avoid concurrent modification issue
-		//, Because new edges will be added 
-		List<GraphEdge> edgeList = new ArrayList<>(edges); 
+		Collection<GraphEdge> ssEdges = (Collection<GraphEdge>) n.getOutEdges().values();
 		
-		for (GraphEdge e1 : edgeList) {
-			for (GraphEdge e2 : edgeList) {
-				if (e1 == e2) continue;
+		for (GraphEdge ssEdge1 : ssEdges) {
+			for (GraphEdge ssEdge2 : ssEdges) {
+				if (ssEdge1 == ssEdge2) continue;
+				
+				
 				
 				// Generated new end node
-				GraphNode n1 = n.getAdjNode(e1);
-				GraphNode n2 = n.getAdjNode(e2);
-				GraphNode newNode = GraphNode.mergeNodes(n1, n2);
+				GraphNode ssNode1 = n.getAdjNode(ssEdge1);
+				GraphNode ssNode2 = n.getAdjNode(ssEdge2);
+				
+				GraphNode fromNode = nodeMap.get(n.getName());
+				GraphNode node1 = nodeMap.get(ssNode1.getName());
+				GraphNode node2 = nodeMap.get(ssNode2.getName());
+				
+				GraphEdge e1 = fromNode.getEdge(ssEdge1.getName());
+				GraphEdge e2 = fromNode.getEdge(ssEdge2.getName());
+				
+				GraphNode newNode = GraphNode.mergeNodes(node1, node2);
 				
 				// 2. generate the new edge
 				GraphEdge newEdge = GraphEdge.mergeEdge(e1, e2);
 				
 				// 3. connect the new edge with the end nodes
-				newEdge.setNode1(n);
-				newEdge.setNode2(newNode);
+				newEdge.setFrom(fromNode);
+				newEdge.setTo(newNode);
 				
 				this.nodeMap.put(newNode.getName(), newNode);
 				
@@ -228,34 +235,50 @@ public class Graph {
 	 * 
 	 * 1. For any edge(a,b) and edge(b,c) in E (edgeset), add a new edge (a,c) into E
 	 * 2. The new edge is named as concatenation of the the name of edge(a,b) and edge(b,c)
-	 * @param g 
+	 * @param snapshotGraph 
 	 */
-	private void inline(Graph g){
+	private void inline(Graph snapshotGraph){
 		HashSet<GraphEdge> visitedEdge = new HashSet<>();
 		
-		for (GraphNode n : g.nodeMap.values()) {
-			@SuppressWarnings("unchecked")
-			Collection<GraphEdge> edges = (Collection<GraphEdge>) n.getOutEdges().values();
-			// make a snapshot
-			List<GraphEdge> edgeList = new ArrayList<>(edges);
+		// prefix 'ss' means snapshot
+		// varibles prefixed by 'ss' is the edges and nodes from snapshot graph.
+		
+		for (GraphNode ssStartNode : snapshotGraph.nodeMap.values()) {
+		
+			Collection<GraphEdge> edges = (Collection<GraphEdge>) ssStartNode.getOutEdges().values();
 			
-			for (GraphEdge e1 : edgeList) {
+			
+			for (GraphEdge ssEdge1 : edges) {
 				
-				if (visitedEdge.contains(e1)) 
+				if (visitedEdge.contains(ssEdge1)) 
 					continue;
 				
-				visitedEdge.add(e1);
+				visitedEdge.add(ssEdge1);
 				
 				// get the other end of node other than n.
-				GraphNode to = n.getAdjNode(e1);
+				GraphNode ssMidNode = ssStartNode.getAdjNode(ssEdge1);
 				
-				Collection<GraphEdge> edges2 = to.outEdges.values();
-				// make a snapshot
-				List<GraphEdge> edgeList2 = new ArrayList<>(edges2);
-				for(GraphEdge e2 : edgeList2){
-					if (e1 == e2) continue;
-					GraphNode endNode = to.getAdjNode(e2);
-					GraphEdge newEdge = GraphEdge.concantinate(e1,e2, n, endNode);
+				
+				Collection<GraphEdge> edges2 = ssMidNode.outEdges.values();
+				
+				GraphNode startNode = (GraphNode) lookupNode(ssStartNode.getName());
+				GraphNode midNode = (GraphNode) lookupNode(ssMidNode.getName());
+				
+				for(GraphEdge ssEdge2 : edges2){
+					if (ssEdge1 == ssEdge2) continue;
+					
+					GraphNode ssEndNode = ssMidNode.getAdjNode(ssEdge2);
+					GraphNode endNode = (GraphNode) lookupNode(ssEndNode.getName());
+					
+					GraphEdge edge1 = (GraphEdge) startNode.getEdge(ssEdge1.getName());
+					GraphEdge edge2 = (GraphEdge) midNode.getEdge(ssEdge2.getName());
+					
+					// new edge is created and added into the Adj of startNode
+					GraphEdge newEdge = GraphEdge.concantinate(edge1,edge2);
+					
+					// connect the new edge with the end points.
+					newEdge.setFrom(startNode);
+					newEdge.setTo(endNode);
 				}
 			}
 		}
