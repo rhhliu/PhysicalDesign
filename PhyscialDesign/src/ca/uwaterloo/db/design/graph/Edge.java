@@ -15,17 +15,6 @@ public abstract class Edge {
 	protected Node from, to;
 	private int fromCardinality, toCardinality;
 	protected String name;
-	public Edge(String name, Node from, Node to) {
-		this.name = name;
-		// TODO: potential concurrency issue
-		// this is not good for concurrency. 
-		// should not publish 'this' before the constructor is over.
-		// setFrom is called from constructor now.
-		// this is just for convenience.
-		setFrom(from);
-		setTo(to);
-		
-	}
 	
 	protected Edge(){
 		

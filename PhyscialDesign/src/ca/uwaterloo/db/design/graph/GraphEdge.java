@@ -19,13 +19,13 @@ public class GraphEdge extends Edge{
 	private Set<EdgeChain> chainSet = new HashSet<>();
 	/**
 	 * Construct a new GraphEdge with specified simple name.
-	 * @param name simple name, which has only one name label.
+	 * @param label simple name, which has only one name label.
 	 */
-	public GraphEdge(String name, Node from, Node to) {
-		super(name, from, to);
+	public GraphEdge(String label, Node from, Node to) {
+		//super(name, from, to);
 				
 		List<String> list = new LinkedList<>();
-		list.add(name);
+		list.add(label);
 		EdgeChain chain = new EdgeChain(list, to);
 		chainSet.add(chain);
 	}
@@ -37,9 +37,9 @@ public class GraphEdge extends Edge{
 		
 	}
 
-	public GraphEdge(String name) {
-		super(name, null, null);
-	}
+//	public GraphEdge(String name) {
+//		super(name, null, null);
+//	}
 	
 
 	public GraphEdge() {

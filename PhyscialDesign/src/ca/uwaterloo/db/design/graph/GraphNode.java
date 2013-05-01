@@ -37,6 +37,8 @@ public class GraphNode extends Node {
 	protected void addAdj(String edgeName, Node node) {
 		GraphEdge edge = new GraphEdge(edgeName, this, node);
 		outEdges.put(edgeName, edge);
+		edge.setFrom(this);
+		edge.setTo(node);
 		//putAdjNode(edge, node);
 		
 	}
