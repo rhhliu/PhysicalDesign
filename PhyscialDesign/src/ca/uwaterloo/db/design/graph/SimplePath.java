@@ -26,7 +26,9 @@ public class SimplePath extends AbstractPath  {
 			
 			PathNode n = new PathNode(nodeName);
 			PathNode pre = nodeList.get(nodeList.size()-1);
-			PathEdge e = new PathEdge(arcName, pre , n);
+			PathEdge e = new PathEdge(arcName);
+			e.setFrom(pre);
+			e.setTo(n);
 			
 			//pre.addOutEdge(e);
 			nodeList.add(n);

@@ -3,6 +3,9 @@ package ca.uwaterloo.db.design.graph;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import ca.uwaterloo.db.design.graphIf.EdgeIf;
+import ca.uwaterloo.db.design.graphIf.NodeIf;
+
 
 /**
  * 
@@ -11,25 +14,29 @@ import java.util.concurrent.ConcurrentHashMap;
  * 2013-03-27
  * PhyscialDesign
  */
-public abstract class Node {
-	protected String name;
+public abstract class Node implements NodeIf {
+	//protected String name;
 	//protected HashMap<Edge, Node> edgeNodeMap = new HashMap<>();
 	
-	public Node(String name) {
-		this.name = name;
-	}
+
 	
 	
+	/* (non-Javadoc)
+	 * @see ca.uwaterloo.db.design.graph.NodeIF#getName()
+	 */
+	@Override
 	public String getName() {
-		return name;
+		return toString();
 	}
 
 
-	public void setName(String name) {
-		this.name = name;
-	}
 
 
+
+	/* (non-Javadoc)
+	 * @see ca.uwaterloo.db.design.graph.NodeIF#getOutEdges()
+	 */
+	@Override
 	public abstract HashMap<String, ? extends Edge> getOutEdges() ;
 
 
@@ -44,30 +51,35 @@ public abstract class Node {
 	 * @param edgeName
 	 * @param node
 	 */
-	protected abstract void addAdj(String edgeName, Node node) ;
-	protected abstract void addAdj(Edge edge);
+	protected abstract void addAdj(String edgeName, NodeIf node) ;
+	protected abstract void addAdj(EdgeIf edge);
 
 
-	public abstract Edge getEdge(String edgeName) ;
+	/* (non-Javadoc)
+	 * @see ca.uwaterloo.db.design.graph.NodeIF#getEdge(java.lang.String)
+	 */
+	@Override
+	public abstract EdgeIf getEdge(String edgeName) ;
 
 
 //	public abstract void addOutEdge(Edge arc);
 	
 	public boolean equals(Object n){
 		
-		if (n != null && ((Node)n).getName().equals(this.name))
+		if (n != null && ((NodeIf)n).getName().equals(this.getName()))
 			return true;
 		else 
 			return false;
 	}
 	
-	public String toString(){
-		return name;
-	}
+	
 
 
-	protected Node getAdjNode(Edge edge) {
+	protected NodeIf getAdjNode(EdgeIf edge) {
 		return edge.getTo();
 	}
+
+
+	
 
 }

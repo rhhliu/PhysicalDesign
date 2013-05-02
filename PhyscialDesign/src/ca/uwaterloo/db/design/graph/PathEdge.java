@@ -3,6 +3,11 @@
  */
 package ca.uwaterloo.db.design.graph;
 
+import ca.uwaterloo.db.design.graphIf.EdgeIf;
+import ca.uwaterloo.db.design.graphIf.NodeIf;
+import ca.uwaterloo.db.design.graphIf.PathEdgeIf;
+import ca.uwaterloo.db.design.graphIf.PathNodeIf;
+
 
 /**
  * @author Rui Liu, rui.liu09@gmail.com
@@ -10,25 +15,18 @@ package ca.uwaterloo.db.design.graph;
  * 2013-04-18
  * PhyscialDesign
  */
-public class PathEdge extends Edge {
-
-	
+public class PathEdge extends Edge implements PathEdgeIf {
 
 	/**
-	 * @param name
-	 * @param from
-	 * @param to
+	 * @param label
 	 */
-	public PathEdge(String name, PathNode from, PathNode to) {
-		this.name = name;
-		setFrom(from);
-		setTo(to);
+	public PathEdge(String label) {
+		this.name = label;
+		
 	}
 
 	
-
-	
-	public Node match(Edge pEdge) {
+	public NodeIf match(EdgeIf pEdge) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -63,7 +61,7 @@ public class PathEdge extends Edge {
 
 
 	@Override
-	public PathNode match(GraphNode gNode, PathNode pNode) {
+	public PathNodeIf match(GraphNode gNode, PathNode pNode) {
 		throw new UnsupportedOperationException();
 	}
 

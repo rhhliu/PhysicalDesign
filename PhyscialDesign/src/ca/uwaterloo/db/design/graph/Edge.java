@@ -1,5 +1,9 @@
 package ca.uwaterloo.db.design.graph;
 
+import ca.uwaterloo.db.design.graphIf.EdgeIf;
+import ca.uwaterloo.db.design.graphIf.NodeIf;
+import ca.uwaterloo.db.design.graphIf.PathNodeIf;
+
 
 /**
  * 
@@ -8,11 +12,11 @@ package ca.uwaterloo.db.design.graph;
  * 2013-03-27
  * PhyscialDesign
  */
-public abstract class Edge {
+public abstract class Edge implements EdgeIf{
 	static final String CONCAT_SEPERATOR	=	"^";
 	static final String MERGE_SEPERATOR		=	"|";
 	
-	protected Node from, to;
+	protected NodeIf from, to;
 	private int fromCardinality, toCardinality;
 	protected String name;
 	
@@ -20,10 +24,11 @@ public abstract class Edge {
 		
 	}
 	
-	/**
-	 * @return the node1
+	/* (non-Javadoc)
+	 * @see ca.uwaterloo.db.design.graph.EdgeIF#getFrom()
 	 */
-	public Node getFrom() {
+	@Override
+	public NodeIf getFrom() {
 		return from;
 	}
 
@@ -37,17 +42,18 @@ public abstract class Edge {
 			from.addAdj(this);
 	}
 
-	/**
-	 * @return the node2
+	/* (non-Javadoc)
+	 * @see ca.uwaterloo.db.design.graph.EdgeIF#getTo()
 	 */
-	public Node getTo() {
+	@Override
+	public NodeIf getTo() {
 		return to;
 	}
 
 	/**
 	 * @param to the node2 to set
 	 */
-	public void setTo(Node to) {
+	public void setTo(NodeIf to) {
 		this.to = to;
 
 	}
@@ -64,6 +70,10 @@ public abstract class Edge {
 	public void setToCardinality(int toCardinality) {
 		this.toCardinality = toCardinality;
 	}
+	/* (non-Javadoc)
+	 * @see ca.uwaterloo.db.design.graph.EdgeIF#getName()
+	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -73,17 +83,17 @@ public abstract class Edge {
 		return getName();
 	}
 	
-	public Edge merge(Edge e){
+	public EdgeIf merge(EdgeIf e){
 		//TODO: add impl for merge
 		return null;
 	}
 	
-	public Edge inLine(Edge e){
+	public EdgeIf inLine(EdgeIf e){
 		//TODO: add impl. for inLine
 		return null;
 	}
 
 
 
-	public abstract PathNode match(GraphNode gNode, PathNode pNode) ;
+	public abstract PathNodeIf match(GraphNode gNode, PathNode pNode) ;
 }

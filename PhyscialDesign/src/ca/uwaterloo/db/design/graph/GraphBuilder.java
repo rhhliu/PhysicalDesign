@@ -11,7 +11,7 @@ package ca.uwaterloo.db.design.graph;
 public class GraphBuilder {
 	
 	static public Graph buildInitGraph(){
-		GraphNode uid = new GraphNode("uid");
+		GraphNode uid = new GraphNode("uid", Type.LONG);
 		
 		GraphNode pass = new GraphNode("password");
 		uid.addAdj("password", pass);

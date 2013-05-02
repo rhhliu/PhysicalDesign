@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import ca.uwaterloo.db.design.graphIf.NodeIf;
+
 /**
  * Currently, This is implemented as a list of labels (String).
  * 
@@ -17,9 +19,9 @@ import java.util.List;
  */
 public class EdgeChain {
 	private List<String> labels = new LinkedList<String>();
-	private Node endNode;
+	private NodeIf endNode;
 	
-	public EdgeChain(List<String> labels, Node endNode){
+	public EdgeChain(List<String> labels, NodeIf endNode){
 		this.labels = labels;
 		this.endNode = endNode;
 	}
@@ -48,14 +50,14 @@ public class EdgeChain {
 	/**
 	 * @return the endNode
 	 */
-	public Node getEndNode() {
+	public NodeIf getEndNode() {
 		return endNode;
 	}
 
 	/**
 	 * @param endNode the endNode to set
 	 */
-	public void setEndNode(Node endNode) {
+	public void setEndNode(NodeIf endNode) {
 		this.endNode = endNode;
 	}
 
@@ -68,7 +70,9 @@ public class EdgeChain {
 		StringBuilder sb = new StringBuilder();
 		Iterator<String> it = labels.iterator();
 		while (it.hasNext()){
-			sb.append(it.next() + "_");
+			sb.append(it.next());
+			if (it.hasNext())
+				sb.append('_');
 		}
 		return sb.toString();
 	}

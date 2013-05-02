@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import ca.uwaterloo.db.design.graphIf.NodeIf;
+
 /**
  * 
  * @author Rui Liu, rui.liu09@gmail.com University of Waterloo 2013-03-27
@@ -31,16 +33,14 @@ public class Graph {
 
 	private GraphNode dfsClone(GraphNode n, Set<GraphNode> visited) {
 		
-		
 		if (visited.contains(n)){
 			return nodeMap.get(n.getName());
 		}else{
-			GraphNode nn = new GraphNode(n);
+			GraphNode nn = GraphNode.cloneGraphNode(n);
 			visited.add(n);
-			nodeMap.put(nn.name, nn);
+			nodeMap.put(nn.getName(), nn);
 			for(GraphEdge e : n.getOutEdges().values()){
-				GraphEdge ee = new GraphEdge(e);
-				
+				GraphEdge ee = GraphEdge.cloneEdge(e);
 				
 				if (e.getFrom() == n){
 					ee.setFrom(nn);
@@ -53,11 +53,8 @@ public class Graph {
 					if (copiedNode1 != null) 
 						ee.setFrom(copiedNode1);
 				}
-				
-				
-				
 			}
-			
+
 			return nn;
 		}
 		
@@ -67,7 +64,7 @@ public class Graph {
 		nodeMap.put(node.getName(), node);
 	}
 
-	public Node lookupNode(String nodeName) {
+	public NodeIf lookupNode(String nodeName) {
 		return nodeMap.get(nodeName);
 	}
 	
@@ -147,7 +144,7 @@ public class Graph {
 			if (depth < minCost) {
 				minCost = depth;
 				path.add(gNode);
-				minCostPath = new LinkedList<>(path);
+				minCostPath = new ArrayList<>(path);
 				path.remove(path.size() - 1);
 
 			}
@@ -172,7 +169,7 @@ public class Graph {
 		return (PathNode) e.match(gNode, pNode);
 	}
 
-	private GraphNode matchNode(Node pNode) {
+	private GraphNode matchNode(NodeIf pNode) {
 		return (GraphNode) nodeMap.get(pNode.getName());
 	}
 
@@ -259,7 +256,7 @@ public class Graph {
 				GraphNode ssMidNode = ssStartNode.getAdjNode(ssEdge1);
 				
 				
-				Collection<GraphEdge> edges2 = ssMidNode.outEdges.values();
+				Collection<GraphEdge> edges2 = ssMidNode.getOutEdges().values();
 				
 				GraphNode startNode = (GraphNode) lookupNode(ssStartNode.getName());
 				GraphNode midNode = (GraphNode) lookupNode(ssMidNode.getName());

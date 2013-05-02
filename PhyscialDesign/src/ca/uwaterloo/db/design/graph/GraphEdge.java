@@ -9,19 +9,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import ca.uwaterloo.db.design.graphIf.NodeIf;
+import ca.uwaterloo.db.design.graphIf.PathEdgeIf;
+import ca.uwaterloo.db.design.graphIf.PathNodeIf;
+
 /**
  * @author Rui Liu, rui.liu09@gmail.com
  * University of Waterloo
  * 2013-04-20
  * PhyscialDesign
  */
-public class GraphEdge extends Edge{
+public class GraphEdge extends Edge implements PathEdgeIf{
 	private Set<EdgeChain> chainSet = new HashSet<>();
 	/**
 	 * Construct a new GraphEdge with specified simple name.
 	 * @param label simple name, which has only one name label.
 	 */
-	public GraphEdge(String label, Node from, Node to) {
+	public GraphEdge(String label, NodeIf from, NodeIf to) {
 		//super(name, from, to);
 				
 		List<String> list = new LinkedList<>();
@@ -32,7 +36,7 @@ public class GraphEdge extends Edge{
 	
 	
 	
-	public GraphEdge(GraphEdge e) {
+	private GraphEdge(GraphEdge e) {
 		chainSet.addAll(e.chainSet);
 		
 	}
@@ -60,7 +64,8 @@ public class GraphEdge extends Edge{
 		while (pit.hasNext()){
 			EdgeChain chain = pit.next();
 			psb.append(chain.toString());
-			psb.append('|');
+			if (pit.hasNext())
+				psb.append('|');
 		}
 		return psb.toString();
 	}
@@ -77,10 +82,10 @@ public class GraphEdge extends Edge{
 	 * @return
 	 */
 	@Override
-	public PathNode match(GraphNode gNode, PathNode pNode) {
+	public PathNodeIf match(GraphNode gNode, PathNode pNode) {
 		if (pNode.getOutEdge() == null) return null;
 		
-		PathNode lastMatchedPathNode = null;
+		PathNodeIf lastMatchedPathNode = null;
 		int maxLen = 0;
 		Iterator<EdgeChain> csit = chainSet.iterator();
 		
@@ -89,7 +94,7 @@ public class GraphEdge extends Edge{
 			
 			Iterator<String> lableItrator = ed.getLableIterator();
 			PathEdge curEdge= pNode.getOutEdge();
-			PathNode matchedToPNode = null;
+			PathNodeIf matchedToPNode = null;
 			
 			int len = 0;
 			boolean matchFailed = false;
@@ -158,6 +163,13 @@ public class GraphEdge extends Edge{
 		}
 				
 		return newEdge;
+	}
+
+
+
+	public static GraphEdge cloneEdge(GraphEdge e) {
+		
+		return new GraphEdge(e);
 	}
 
 	
