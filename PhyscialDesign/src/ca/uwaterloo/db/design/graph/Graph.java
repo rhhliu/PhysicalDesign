@@ -111,18 +111,20 @@ public class Graph {
 		// DFS match
 		minCost = Integer.MAX_VALUE;
 		int depth = 0;
-		List<GraphNode> path = new LinkedList<>();
+		List<GraphNode> nodeList = new LinkedList<>();
+		List<GraphEdge> edgeList = new LinkedList<>();
 
 		// dfs to find the match path for the path started at pNode
 		// the result is in the minCost and minCostPath,
 		// both of which are member variables.
-		dfsMatch(current, pNode, depth, path);
+		dfsMatch(current, pNode, depth, nodeList, edgeList);
 
-		return new GraphPath(minCostPath);
+		return GraphPath.buildGraphPath(minCostNodeList, minCostEdgeList);
 	}
 
 	private int minCost;
-	private List<GraphNode> minCostPath;
+	private List<GraphNode> minCostNodeList;
+	private List<GraphEdge> minCostEdgeList;
 
 	/**
 	 * Use DFS to find the minimal cost match for path started at pNode. The
@@ -130,12 +132,13 @@ public class Graph {
 	 * 
 	 * @param depth
 	 *            records the level of recursion, which is used as cost for now
-	 * @param path
+	 * @param nodeList
 	 *            records the current path from the 'current' to the latest
 	 *            matched graph node.
+	 * @param edgeList 
 	 */
 	private void dfsMatch(GraphNode gNode, PathNode pNode, int depth,
-			List<GraphNode> path) {
+			List<GraphNode> nodeList, List<GraphEdge> edgeList) {
 
 		if (!gNode.equals(pNode))
 			return;
@@ -143,9 +146,12 @@ public class Graph {
 			// the path is matched matched
 			if (depth < minCost) {
 				minCost = depth;
-				path.add(gNode);
-				minCostPath = new ArrayList<>(path);
-				path.remove(path.size() - 1);
+				nodeList.add(gNode);
+				
+				minCostNodeList = new ArrayList<>(nodeList);
+				minCostEdgeList = new ArrayList<>(edgeList);
+				
+				nodeList.remove(nodeList.size() - 1);
 
 			}
 		} else {
@@ -156,9 +162,13 @@ public class Graph {
 
 				PathNode pn = matchEdge(gNode, e, pNode);
 				if (pn != null) {
-					path.add(gNode);
-					dfsMatch(gNode.getAdjNode(e), pn, depth + 1, path);
-					path.remove(path.size() - 1);
+					nodeList.add(gNode); 
+					edgeList.add(e);
+					
+					dfsMatch(gNode.getAdjNode(e), pn, depth + 1, nodeList, edgeList);
+					
+					nodeList.remove(nodeList.size() - 1);
+					edgeList.remove(edgeList.size() -1 );
 				}
 			}
 		}

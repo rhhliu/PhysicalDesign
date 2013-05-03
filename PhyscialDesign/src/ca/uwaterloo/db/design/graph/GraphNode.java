@@ -107,18 +107,18 @@ public class GraphNode extends Node implements PathNodeIf{
 		return (GraphNode) edge.getTo();
 	}
 
-	public GraphEdge findEdgeByNode(GraphNode gNode) {
-		//TODO : this is a slow operation.
-		
-		for (GraphEdge ge : outEdges.values()) {
-			if (ge.getTo() == gNode){
-				return ge;
-			}
-		}
-		
-		return null;
-		
-	}
+//	public GraphEdge findEdgeByNode(GraphNode gNode) {
+//		//TODO : this is a slow operation.
+//		
+//		for (GraphEdge ge : outEdges.values()) {
+//			if (ge.getTo() == gNode){
+//				return ge;
+//			}
+//		}
+//		
+//		return null;
+//		
+//	}
 
 	/* (non-Javadoc)
 	 * @see ca.uwaterloo.db.design.graph.Node#getName()
