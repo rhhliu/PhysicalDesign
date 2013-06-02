@@ -17,7 +17,6 @@ public class Query {
 	private double weight;
 
 	public Query(double weight) {
-
 		this.weight = weight;
 	}
 
@@ -27,7 +26,6 @@ public class Query {
 
 	public void setWeight(double weight) {
 		this.weight = weight;
-		
 	}
 	
 	/**

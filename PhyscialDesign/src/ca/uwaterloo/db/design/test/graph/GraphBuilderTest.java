@@ -16,7 +16,7 @@ public class GraphBuilderTest {
 
 	@Test
 	public void testBuildInitGraph() {
-		Graph g = GraphBuilder.buildInitGraph();
+		Graph g = GraphBuilder.buildDataGraph();
 		
 	}
 

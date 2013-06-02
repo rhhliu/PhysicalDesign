@@ -76,9 +76,15 @@ public class Graph {
 		Graph snapshotGraph = this.cloneGraph();
 		merge(snapshotGraph);
 		inline(snapshotGraph);
+		pullUp(snapshotGraph);
 	}
 
 	
+	private void pullUp(Graph snapshotGraph) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	// Deep clone of nodes and edges.
 	private Graph cloneGraph() {
 		return new Graph(this);
@@ -168,7 +174,7 @@ public class Graph {
 					dfsMatch(gNode.getAdjNode(e), pn, depth + 1, nodeList, edgeList);
 					
 					nodeList.remove(nodeList.size() - 1);
-					edgeList.remove(edgeList.size() -1 );
+					edgeList.remove(edgeList.size() - 1);
 				}
 			}
 		}

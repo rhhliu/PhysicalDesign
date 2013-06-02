@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package ca.uwaterloo.db.design.framwork;
 
 import java.util.HashSet;
@@ -10,13 +13,18 @@ import ca.uwaterloo.db.design.graph.NoPathFoundException;
 import ca.uwaterloo.db.design.graph.SimplePath;
 
 /**
- * 
- * @author Rui Liu, rui.liu09@gmail.com University of Waterloo 2013-03-27
- *         PhyscialDesign
+ * @author Rui Liu, rui.liu09@gmail.com
+ * University of Waterloo
+ * 2013-06-01
+ * PhyscialDesign
  */
-public class Main {
-	public static boolean DEBUG = true;
-	
+public class SAMain {
+
+	private static final boolean DEBUG = true;
+
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		Graph graph = GraphBuilder.buildDataGraph();
 		Set<Query> querySet = WorkLoadBuilder.buildWorkLoads();
