@@ -31,7 +31,12 @@ public class MergeOperator extends Operator {
 	public boolean isApplyOnConsecutiveEdges() {
 		return false;
 	}
-
+	
+	/**
+	 * e0 and e1 should be sibling edges.
+	 * To merge e0 and e1 to a new edge, the cost gain will be 
+	 * the intersections of the queries on both of the edges.
+	 */
 	@Override
 	public double getCostGain(Edge e0, Edge e1) {
 		HashSet<Query> s = new HashSet<Query>(e0.getQueries());

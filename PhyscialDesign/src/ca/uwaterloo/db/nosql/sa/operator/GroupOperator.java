@@ -4,10 +4,12 @@
 package ca.uwaterloo.db.nosql.sa.operator;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import ca.uwaterloo.db.nosql.sa.Edge;
 import ca.uwaterloo.db.nosql.sa.GroupNode;
 import ca.uwaterloo.db.nosql.sa.MergedNode;
+import ca.uwaterloo.db.nosql.sa.Node;
 import ca.uwaterloo.db.nosql.sa.Query;
 
 /**
@@ -53,16 +55,27 @@ public class GroupOperator extends Operator {
 		// we do not use e0, but it must exist.
 		GroupNode gNode = new GroupNode(e1);
 		
+		// clone e0 to be the in-edge of gNode
 		Edge ee = e0.cloneEdge();
+		ee.setFrom(e0.getFrom());
+		ee.setTo(gNode);
 		
-		
-
+		//clone all out-edges of c (e1.getTo()) 
+		// to be the out-edges of gNode
+		Node c = e1.getTo();
+		Set<Edge> outEdges = c.getOutEdges();
+		for (Edge edge : outEdges) {
+			Edge e = edge.cloneEdge();
+			e.setTo(edge.getTo());
+			e.setFrom(gNode);
+		}
 	}
 
 	@Override
 	public boolean isElligible(Edge e0, Edge e1) {
 		// e0 and e1 should be consecutive edges
-		if (! (e0.getTo() instanceof MergedNode ) && ! (e1.getTo()instanceof MergedNode)  && e0.getTo().getOutEdges().contains(e1))
+		if ( !(e0.getTo() instanceof MergedNode ) && !(e1.getTo()instanceof MergedNode) 
+				&& e0.getTo().getOutEdges().contains(e1))
 			return true;
 		else
 			return false;
