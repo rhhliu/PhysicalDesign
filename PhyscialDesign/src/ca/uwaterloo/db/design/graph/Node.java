@@ -1,7 +1,6 @@
 package ca.uwaterloo.db.design.graph;
 
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 import ca.uwaterloo.db.design.graphIf.EdgeIf;
 import ca.uwaterloo.db.design.graphIf.NodeIf;

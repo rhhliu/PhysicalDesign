@@ -9,11 +9,11 @@ package ca.uwaterloo.db.design.graph;
  * 2013-05-01
  * PhyscialDesign
  */
-public class Attribute {
+public class Attribute0 {
 	Type type;
 	String name;
 	
-	public Attribute(String name, Type type){
+	public Attribute0(String name, Type type){
 		this.type = type;
 		this.name = name;
 	}

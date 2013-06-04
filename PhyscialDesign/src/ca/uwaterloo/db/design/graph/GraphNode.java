@@ -21,13 +21,13 @@ import ca.uwaterloo.db.design.graphIf.PathNodeIf;
  */
 public class GraphNode extends Node implements PathNodeIf{
 	protected HashMap<String, GraphEdge> outEdges = new HashMap<>();
-	protected List<Attribute> attList = new ArrayList<>(); 
+	protected List<Attribute0> attList = new ArrayList<>(); 
 	/**
 	 * @param attName
 	 * @param attType 
 	 */
 	public GraphNode(String attName, Type attType) {
-		attList.add(new Attribute(attName, attType));
+		attList.add(new Attribute0(attName, attType));
 	}
 	
 	public GraphNode(String attName){
@@ -126,7 +126,7 @@ public class GraphNode extends Node implements PathNodeIf{
 	@Override
 	public String getName() {
 		StringBuilder sb = new StringBuilder();
-		for (Attribute att : attList) {
+		for (Attribute0 att : attList) {
 			sb.append(att.getName()).append(';');
 		}
 		

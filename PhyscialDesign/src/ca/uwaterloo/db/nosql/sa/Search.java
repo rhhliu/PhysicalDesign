@@ -3,6 +3,10 @@
  */
 package ca.uwaterloo.db.nosql.sa;
 
+import java.util.Set;
+
+import ca.uwaterloo.db.nosql.sa.operator.Operator;
+
 /**
  * @author Rui Liu, rui.liu09@gmail.com
  * University of Waterloo
@@ -11,12 +15,15 @@ package ca.uwaterloo.db.nosql.sa;
  */
 public abstract class Search {
 	protected SolutionGraph solutionGraph;
+	protected Set<Operator> operaterSet;
 	
 	public void setInitialSolution(SolutionGraph sg){
 		this.solutionGraph = sg;
 	}
 	
-	abstract void search();
+	
+	
+	abstract SolutionGraph search();
 	
 	public SolutionGraph getResult(){
 		return solutionGraph;

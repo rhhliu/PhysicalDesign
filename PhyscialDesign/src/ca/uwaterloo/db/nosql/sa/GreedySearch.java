@@ -3,6 +3,11 @@
  */
 package ca.uwaterloo.db.nosql.sa;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import ca.uwaterloo.db.nosql.sa.operator.Operator;
+
 /**
  * @author Rui Liu, rui.liu09@gmail.com
  * University of Waterloo
@@ -12,19 +17,70 @@ package ca.uwaterloo.db.nosql.sa;
 public class GreedySearch extends Search {
 
 	@Override
-	void search() {
+	public SolutionGraph search() {
 		final SolutionGraph s = solutionGraph;
+		Move mv;
 		
-		Operator bestOp = getBestOp(s);
+		do{
+			mv = getBestMove(s, operaterSet);
+			
+			if (mv.costGain > 0)
+				s.apply(mv);
+		}while (mv.costGain > 0);
 		
+		return s;
 		
 	}
 
-	private Operator getBestOp(SolutionGraph s) {
-		// TODO Auto-generated method stub
-		return null;
+	private Move getBestMove(SolutionGraph s, Set<Operator> ops) {
+		double maxGain = 0;
+		Edge maxEdge0 = null, maxEdge1 = null;
+		Operator maxOp = null;
+		
+		//for each operator
+		for (Operator op : ops){
+			
+			// for each possible application of the operator op
+			// that is usually two eligible edges
+			for (Edge e0 : s.getEdges()){
+				
+				
+				Set<Edge> eSet = null;
+				if (op.isApplyOnSiblingEdges()){
+					Node from = e0.getFrom();
+					eSet = new HashSet<Edge>(from.getOutEdges());
+					eSet.remove(e0);
+				}else if (op.isApplyOnConsecutiveEdges()){
+					Node to = e0.getTo();
+					eSet = to.getOutEdges();
+				}
+				
+				assert(eSet != null);
+				
+				for (Edge e1 : eSet){
+					
+					if ( !op.isElligible(e0, e1) ) continue;
+					
+					double costGain = op.getCostGain(e0, e1);
+					if (costGain > maxGain){
+						maxGain = costGain;
+						maxEdge0 = e0;
+						maxEdge1 = e1;
+						maxOp = op;
+					}
+					
+				}// end of for e1
+			}// end of for e0
+		}// end of for ops
+		
+		
+		return new Move(maxGain, maxOp, maxEdge0, maxEdge1);
 	}
 
+	public static void main(String[] args) {
+		GreedySearch gs = new GreedySearch();
+		SolutionGraph s = gs.search();
+		Util.output(s);
 	
-
+	}
 }
