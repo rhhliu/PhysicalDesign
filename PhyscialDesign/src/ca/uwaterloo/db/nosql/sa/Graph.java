@@ -3,6 +3,8 @@
  */
 package ca.uwaterloo.db.nosql.sa;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -12,8 +14,8 @@ import java.util.Set;
  * PhyscialDesign
  */
 public class Graph {
-	protected Set<Edge> edges;
-	protected Set<Node> nodes;
+	protected Set<Edge> edges = new HashSet<>();
+	protected Set<Node> nodes = new HashSet<>();
 	/**
 	 * @return the edges
 	 */
@@ -39,6 +41,23 @@ public class Graph {
 		this.nodes = nodes;
 	}
 	
+	public void addNodes(Node ...nodes ) {
+		this.nodes.addAll(Arrays.asList(nodes));
+		
+	}
+	
+	public void addEdges(Edge... edges){
+		this.edges.addAll(Arrays.asList(edges));
+	}
+	
+	public void removeEdge(Edge e) {
+		this.edges.remove(e);
+		
+	}
+	
+	public void removeNode(Node n){
+		this.nodes.remove(n);
+	}
 	
 
 }

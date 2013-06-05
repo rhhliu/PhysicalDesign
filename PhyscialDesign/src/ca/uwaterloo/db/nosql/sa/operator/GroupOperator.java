@@ -11,6 +11,7 @@ import ca.uwaterloo.db.nosql.sa.GroupNode;
 import ca.uwaterloo.db.nosql.sa.MergedNode;
 import ca.uwaterloo.db.nosql.sa.Node;
 import ca.uwaterloo.db.nosql.sa.Query;
+import ca.uwaterloo.db.nosql.sa.SolutionGraph;
 
 /**
  * @author Rui Liu, rui.liu09@gmail.com 
@@ -21,21 +22,29 @@ public class GroupOperator extends Operator {
 
 	@Override
 	public boolean isApplyOnSiblingEdges() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isApplyOnConsecutiveEdges() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public double getCostGain(Edge e0, Edge e1) {
 		HashSet<Query> s = new HashSet<Query>(e0.getQueries());
 		s.retainAll(e1.getQueries());
-		return s.size();
+		int c = 0;
+		for (Query q : s) {
+			if (q.getEdgeLevel(e0.getLastSubEdge()) +1 == q.getEdgeLevel(e1.getFirstSubEdge()))
+				c++;
+		}
+		
+		Node b = e0.getTo();
+		if (b.getOutEdges().size()>1) 
+			return 0;
+		
+		return c;
 	}
 
 	/**
@@ -44,7 +53,7 @@ public class GroupOperator extends Operator {
 	 * will be grouped to a-(e0)->( new group node from b and c  )
 	 */
 	@Override
-	public void apply(Edge e0, Edge e1) {
+	public void apply(SolutionGraph sg, Edge e0, Edge e1) {
 		
 		// assert e0 and e1 are consecutive edges.
 		assert(e0.getTo() == e1.getFrom());
@@ -64,6 +73,12 @@ public class GroupOperator extends Operator {
 		for (Edge e : c.getOutEdges()) {
 			e.setFrom(gNode);
 		}
+		
+		sg.addNodes(gNode);
+		
+		sg.removeNode(e1.getFrom());
+		sg.removeNode(e1.getTo());
+		sg.removeEdge(e1);
 	}
 
 	@Override

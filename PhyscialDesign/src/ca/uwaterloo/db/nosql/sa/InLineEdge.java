@@ -63,7 +63,26 @@ public class InLineEdge extends Edge {
 		e.setQueries(this.getQueries());
 		return super.cloneEdge();
 	}
+
+	/* (non-Javadoc)
+	 * @see ca.uwaterloo.db.nosql.sa.Edge#getQueryRefCount(ca.uwaterloo.db.nosql.sa.Query)
+	 */
+	@Override
+	public int getQueryRefCount(Query q) {
+		int r0 = e0.getQueryRefCount(q);
+		int r1 = e1.getQueryRefCount(q);
+		if (r0 == 0 || r1 == 0 ) return 0;
+		
+		return r0 + r1;
+	}
 	
+	public Edge getFirstSubEdge() {
+		
+		return e0.getFirstSubEdge();
+	}
 	
+	public Edge getLastSubEdge() {
+		return e1.getLastSubEdge();
+	}
 	
 }

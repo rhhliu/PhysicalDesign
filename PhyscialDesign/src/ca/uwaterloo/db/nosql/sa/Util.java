@@ -13,13 +13,16 @@ import java.util.Set;
  */
 public class Util {
 	static public void output(Graph g){
+		System.out.println();
+		System.out.println("--------------------------------------------");
 		Set<Node> nodes = g.getNodes();
 		for (Node n : nodes){
 			System.out.print(n + " : ");
 			Set<Edge> outEdges = n.getOutEdges();
 			for (Edge edge : outEdges) {
-				System.out.print("-[" + edge + "]->"+edge.getTo());
+				System.out.print("-[" + edge + "]->"+edge.getTo() + ";   ");
 			}
+			System.out.println();
 		}
 	}
 }

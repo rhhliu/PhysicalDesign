@@ -4,6 +4,7 @@
 package ca.uwaterloo.db.nosql.sa.operator;
 
 import ca.uwaterloo.db.nosql.sa.Edge;
+import ca.uwaterloo.db.nosql.sa.SolutionGraph;
 
 /**
  * @author Rui Liu, rui.liu09@gmail.com
@@ -19,5 +20,5 @@ public abstract class Operator {
 	abstract public boolean isElligible(Edge e0, Edge e1);
 	abstract public double getCostGain(Edge e0, Edge e1);
 
-	abstract public void apply(Edge e0, Edge e1);
+	abstract public void apply(SolutionGraph sg, Edge e0, Edge e1);
 }

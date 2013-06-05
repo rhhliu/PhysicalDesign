@@ -1,6 +1,7 @@
 package ca.uwaterloo.db.nosql.sa;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,7 +92,7 @@ public class Edge {
 	}
 
 	public String toString(){
-		return name;
+		return getName();
 	}
 
 	public Map<Attribute, Attribute> getMappings() {
@@ -113,9 +114,33 @@ public class Edge {
 	}
 
 	public void removeTo() {
-		//TODO;
-		throw new RuntimeException("Unsported");
+		to.getInEdges().remove(this);
+		this.to = null;
+				
 		
+	}
+
+	public void addQuerys(Query... qs) {
+		this.queries.addAll(Arrays.asList(qs));
+	}
+	
+	public void addQuery(Query q){
+		this.queries.add(q);
+	}
+
+	public int getQueryRefCount(Query q) {
+		if (queries.contains(q))
+			return 1;
+		return 0;
+	}
+
+	public Edge getFirstSubEdge() {
+		
+		return this;
+	}
+
+	public Edge getLastSubEdge() {
+		return this;
 	}
 	
 }

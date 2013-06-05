@@ -11,6 +11,7 @@ import ca.uwaterloo.db.nosql.sa.MergedEdge;
 import ca.uwaterloo.db.nosql.sa.MergedNode;
 import ca.uwaterloo.db.nosql.sa.Node;
 import ca.uwaterloo.db.nosql.sa.Query;
+import ca.uwaterloo.db.nosql.sa.SolutionGraph;
 
 /**
  * @author Rui Liu, rui.liu09@gmail.com
@@ -41,7 +42,17 @@ public class MergeOperator extends Operator {
 	public double getCostGain(Edge e0, Edge e1) {
 		HashSet<Query> s = new HashSet<Query>(e0.getQueries());
 		s.retainAll(e1.getQueries());
-		return s.size();
+		
+		int c = 0;
+		for (Query q : s) {
+			
+			if (q.getEdgeLevel(e0.getFirstSubEdge()) == q.getEdgeLevel(e1.getFirstSubEdge())
+					&&
+					q.getEdgeLevel(e0.getLastSubEdge()) == q.getEdgeLevel(e1.getLastSubEdge()))
+				c++;
+		}
+		
+		return c;
 	}
 
 	/**
@@ -59,12 +70,12 @@ public class MergeOperator extends Operator {
 	 *  e0, and e1 not exist.
 	 */
 	@Override
-	public void apply(Edge e0, Edge e1) {
+	public void apply(SolutionGraph sg, Edge e0, Edge e1) {
 		MergedEdge me = new MergedEdge(e0, e1);
 		Node a = e0.getFrom();
 		me.setFrom(a);
-		Node n = new MergedNode(e0.getTo(), e1.getTo());
-		me.setTo(n );
+		Node mn = new MergedNode(e0.getTo(), e1.getTo());
+		me.setTo(mn );
 		
 		
 		//move the query reference to the new merged edge
@@ -73,22 +84,31 @@ public class MergeOperator extends Operator {
 		me.getQueries().addAll(e1.getQueries());
 		
 		
+		sg.addEdges(me);
+		sg.addNodes(mn);
 		
 		//out-edges of new merged node 
 		Node b = e0.getTo();
 		
 		for (Edge e : b.getOutEdges()){
-			e.setFrom(n);
+			e.setFrom(mn);
 		}
 		
 		Node c = e1.getTo();
 		for (Edge e : c.getOutEdges()){
-			e.setFrom(n);
+			e.setFrom(mn);
 		}
 		
 		
+		
 		e0.removeFrom();
+		e0.removeTo();
 		e1.removeFrom();
+		e1.removeTo();
+		
+		sg.removeEdge(e0);
+		sg.removeEdge(e1);
+		
 	
 	}
 

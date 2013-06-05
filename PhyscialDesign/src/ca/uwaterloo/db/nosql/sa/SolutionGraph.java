@@ -27,9 +27,13 @@ public class SolutionGraph extends Graph {
 
 	public void apply(Move mv) {
 		
-		mv.operator.apply(mv.e0, mv.e1);
+		mv.operator.apply(this, mv.e0, mv.e1);
 		
 	}
+
+	
+
+	
 
 
 }

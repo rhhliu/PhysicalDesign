@@ -65,5 +65,9 @@ public class Node {
 		inEdges.add(edge);
 	}
 
+	public Set<Edge> getInEdges() {
+		return inEdges;
+	}
+
 
 }

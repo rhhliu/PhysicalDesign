@@ -6,6 +6,9 @@ package ca.uwaterloo.db.nosql.sa;
 import java.util.HashSet;
 import java.util.Set;
 
+import ca.uwaterloo.db.nosql.sa.operator.GroupOperator;
+import ca.uwaterloo.db.nosql.sa.operator.InlineOperator;
+import ca.uwaterloo.db.nosql.sa.operator.MergeOperator;
 import ca.uwaterloo.db.nosql.sa.operator.Operator;
 
 /**
@@ -18,6 +21,9 @@ public class GreedySearch extends Search {
 	
 	public GreedySearch(SolutionGraph sg){
 		this.solutionGraph = sg;
+		operaterSet.add(new InlineOperator());
+		operaterSet.add(new MergeOperator());
+		operaterSet.add(new GroupOperator());
 	}
 
 	@Override
@@ -30,7 +36,11 @@ public class GreedySearch extends Search {
 			
 			if (mv.costGain > 0)
 				s.apply(mv);
+			
+			Util.output(s);
 		}while (mv.costGain > 0);
+		
+		
 		
 		return s;
 		
@@ -59,7 +69,7 @@ public class GreedySearch extends Search {
 					eSet = to.getOutEdges();
 				}
 				
-				assert(eSet != null);
+				if (eSet == null || eSet.size() == 0) continue;
 				
 				for (Edge e1 : eSet){
 					
@@ -83,6 +93,8 @@ public class GreedySearch extends Search {
 
 	public static void main(String[] args) {
 		SolutionGraph sg = InitSolutionBuilder.buildSolutionGraph();
+		if (Search.DEBUG)
+			Util.output(sg);
 		GreedySearch gs = new GreedySearch(sg);
 		SolutionGraph s = gs.doSearch();
 		Util.output(s);

@@ -41,9 +41,39 @@ public class InitSolutionBuilder {
 		twbody.setTo(body);
 		
 		Node ts = new Node("ts", Type.LONG);
-		Edge tsedge = new Edge("twts");
-		tsedge.setFrom(tid);
-		tsedge.setTo(body);
+		Edge twts = new Edge("twts");
+		twts.setFrom(tid);
+		twts.setTo(ts);
+		
+		sg.addNodes(uid, pass, tid, body, ts);
+		sg.addEdges(follows, lead, upass, author, twbody, twts);
+		
+		
+		// Querys;
+		Query timeLineQuery = new Query("Timeline");
+		Query userLineQuery = new Query("Userline");
+		Query passwordQuery = new Query("Password");
+		Query followersQuery = new Query("Followers");
+		
+		
+		timeLineQuery.addEdges(follows, author, twbody, twts);
+		timeLineQuery.addLevles(0,1,2,2);
+		userLineQuery.addEdges(author, twbody, twts);
+		userLineQuery.addLevles(0,1,1);
+		passwordQuery.addEdges(upass);
+		passwordQuery.addLevles(0);
+		followersQuery.addEdges(lead);
+		followersQuery.addLevles(0);
+		
+		
+		// Query references
+//		lead.addQuery(followersQuery);
+//		follows.addQuery(timeLineQuery);
+//		upass.addQuery(passwordQuery);
+//		
+//		author.addQuerys(timeLineQuery, userLineQuery);
+//		twbody.addQuerys(timeLineQuery, userLineQuery);
+//		twts.addQuerys(timeLineQuery,userLineQuery);
 		
 		return sg;
 	}
