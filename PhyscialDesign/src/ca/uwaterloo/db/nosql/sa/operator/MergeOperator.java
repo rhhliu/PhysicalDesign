@@ -44,22 +44,51 @@ public class MergeOperator extends Operator {
 		return s.size();
 	}
 
+	/**
+	 *       a
+	 *   e0 / \ e1
+	 *     b   c
+	 *    /\   /\
+	 *     
+	 * After merge
+	 * 		a
+	 * 		| me
+	 * 		n
+	 *     /\/\
+	 *     
+	 *  e0, and e1 not exist.
+	 */
 	@Override
 	public void apply(Edge e0, Edge e1) {
 		MergedEdge me = new MergedEdge(e0, e1);
-		Node from = e0.getFrom();
-		me.setFrom(from);
-		Node to = new MergedNode(e0.getTo(), e1.getTo());
-		me.setTo(to );
+		Node a = e0.getFrom();
+		me.setFrom(a);
+		Node n = new MergedNode(e0.getTo(), e1.getTo());
+		me.setTo(n );
 		
 		
 		//move the query reference to the new merged edge
-		Set<Query> qs0 = new HashSet<>(e0.getQueries());
-		Set<Query> qs1 = e1.getQueries();
-		//intersection
-		qs0.retainAll(qs1);
-		me.setQueries(qs0);
 		
+		me.getQueries().addAll(e0.getQueries());
+		me.getQueries().addAll(e1.getQueries());
+		
+		
+		
+		//out-edges of new merged node 
+		Node b = e0.getTo();
+		
+		for (Edge e : b.getOutEdges()){
+			e.setFrom(n);
+		}
+		
+		Node c = e1.getTo();
+		for (Edge e : c.getOutEdges()){
+			e.setFrom(n);
+		}
+		
+		
+		e0.removeFrom();
+		e1.removeFrom();
 	
 	}
 

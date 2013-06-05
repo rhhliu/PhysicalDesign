@@ -17,14 +17,12 @@ import javax.management.RuntimeErrorException;
  * PhyscialDesign
  */
 public class MergedEdge extends Edge{
-	private Set<List<Edge>> edgeSet = new HashSet<>(); 
+	//private Set<List<Edge>> edgeSet = new HashSet<>();
+	private Edge e0,e1;
 	
 	public MergedEdge(Edge e0, Edge e1) {
-		List<Edge> edgeList0 = e0.getEdgeList();
-		List<Edge> edgeList1 = e1.getEdgeList();
-		
-		edgeSet.add(edgeList0);
-		edgeSet.add(edgeList1);
+		this.e0 = e0;
+		this.e1 = e1;
 		
 	}
 
@@ -33,16 +31,7 @@ public class MergedEdge extends Edge{
 	 */
 	@Override
 	public String getName() {
-		StringBuilder sb = new StringBuilder();
-		
-		for (List<Edge> edgeList : edgeSet) {
-			for (Edge edge : edgeList) {
-				sb.append(edge).append('_');
-			}
-			sb.setCharAt(sb.length()-1, '|');
-		}
-		
-		return sb.toString();
+		return e0.getName() + "|" + e1.getName();
 	}
 
 	/* (non-Javadoc)

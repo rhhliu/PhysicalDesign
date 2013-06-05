@@ -9,6 +9,20 @@ public class Node {
 	private Set<Edge> outEdges = new HashSet<>(), inEdges = new HashSet<>();
 	
 	private Attribute attribute;
+	public Node(String attName) {
+		this( new Attribute(attName, Type.TEXT));
+	}
+	
+	public Node(String attName, Type type) {
+		this( new Attribute(attName, type));
+	}
+	
+	public Node(Attribute att){
+		this.attribute = att;
+	}
+	
+	protected Node(){}
+
 	/**
 	 * @return the outEdges
 	 */

@@ -100,17 +100,22 @@ public class Edge {
 		return m;
 	}
 
-	public List<Edge> getEdgeList() {
-		ArrayList<Edge> eList = new ArrayList<>();
-		eList.add(this);
-		return eList;
-		
-	}
-
 	public Edge cloneEdge() {
 		Edge e = new Edge(name);
 		e.queries = queries;
 		return e;
+	}
+
+	public void removeFrom() {
+		from.getOutEdges().remove(this);
+		this.from = null;
+		
+	}
+
+	public void removeTo() {
+		//TODO;
+		throw new RuntimeException("Unsported");
+		
 	}
 	
 }

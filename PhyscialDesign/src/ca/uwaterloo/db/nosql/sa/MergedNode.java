@@ -7,24 +7,17 @@ import ca.uwaterloo.db.design.graph.Attribute0;
 
 public class MergedNode extends Node{
 	
-	private List<Attribute> attList=new ArrayList<>();
+	//private List<Attribute> attList=new ArrayList<>();
+	Node n0, n1;
 
 	public MergedNode(Node n0, Node n1) {
-		attList.addAll(n0.getAttributes());
-		attList.addAll(n1.getAttributes());
+		this.n0 = n0;
+		this.n1 = n1;
 	}
 
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for(Attribute att: attList){
-			sb.append(att).append(',');
-		}
-		return sb.toString();
+		return n0 + "; " + n1;
 	}
 	
-
-	public List<Attribute> getAttributes() {
-		return attList;
-	}
 }

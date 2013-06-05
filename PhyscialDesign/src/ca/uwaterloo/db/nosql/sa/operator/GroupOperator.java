@@ -55,18 +55,13 @@ public class GroupOperator extends Operator {
 		// we do not use e0, but it must exist.
 		GroupNode gNode = new GroupNode(e1);
 		
-		// clone e0 to be the in-edge of gNode
-		Edge ee = e0.cloneEdge();
-		ee.setFrom(e0.getFrom());
-		ee.setTo(gNode);
+		// set e0 to be the in-edge of gNode
+		e0.setTo(gNode);
 		
-		//clone all out-edges of c (e1.getTo()) 
+		//set all out-edges of c (e1.getTo()) 
 		// to be the out-edges of gNode
 		Node c = e1.getTo();
-		Set<Edge> outEdges = c.getOutEdges();
-		for (Edge edge : outEdges) {
-			Edge e = edge.cloneEdge();
-			e.setTo(edge.getTo());
+		for (Edge e : c.getOutEdges()) {
 			e.setFrom(gNode);
 		}
 	}

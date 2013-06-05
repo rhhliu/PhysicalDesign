@@ -23,7 +23,7 @@ public abstract class Search {
 	
 	
 	
-	abstract SolutionGraph search();
+	abstract SolutionGraph doSearch();
 	
 	public SolutionGraph getResult(){
 		return solutionGraph;

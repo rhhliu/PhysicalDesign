@@ -12,31 +12,25 @@ import java.util.List;
  */
 public class GroupNode extends Node {
 	
+	// internally it is n0--(e)--> n1
+	private Node n0, n1;
+	private Edge e;
 
-	public GroupNode(Edge e1) {
-		Node n0 = e1.getFrom();
-		Node n1 = e1.getTo();
-		
-		if (n0 instanceof GroupNode)
-			edgeList.addAll(((GroupNode) n0).getEdgeList());
-		
-		if (n1 instanceof GroupNode)
-			edgeList.addAll(((GroupNode) n1).getEdgeList());
-		
-		
+	public GroupNode(Edge e) {
+		n0 = e.getFrom();
+		n1 = e.getTo();
+		this.e = e;
 	}
 
-	// consecutive edges
-	private List<Edge> edgeList = new ArrayList<>();
-
-	/**
-	 * @return the edgeList
+	/* (non-Javadoc)
+	 * @see ca.uwaterloo.db.nosql.sa.Node#toString()
 	 */
-	public List<Edge> getEdgeList() {
-		return edgeList;
+	@Override
+	public String toString() {
+		
+		return n0 + "-[" + e + "]->" + n1; 
 	}
 	
 	
-	
-	
+
 }

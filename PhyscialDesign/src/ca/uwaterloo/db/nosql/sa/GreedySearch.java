@@ -15,9 +15,13 @@ import ca.uwaterloo.db.nosql.sa.operator.Operator;
  * PhyscialDesign
  */
 public class GreedySearch extends Search {
+	
+	public GreedySearch(SolutionGraph sg){
+		this.solutionGraph = sg;
+	}
 
 	@Override
-	public SolutionGraph search() {
+	public SolutionGraph doSearch() {
 		final SolutionGraph s = solutionGraph;
 		Move mv;
 		
@@ -78,8 +82,9 @@ public class GreedySearch extends Search {
 	}
 
 	public static void main(String[] args) {
-		GreedySearch gs = new GreedySearch();
-		SolutionGraph s = gs.search();
+		SolutionGraph sg = InitSolutionBuilder.buildSolutionGraph();
+		GreedySearch gs = new GreedySearch(sg);
+		SolutionGraph s = gs.doSearch();
 		Util.output(s);
 	
 	}
