@@ -37,6 +37,8 @@ public class GreedySearch extends Search {
 			if (mv.costGain > 0)
 				s.apply(mv);
 			
+			System.out.println("Operator applied: ");
+			System.out.println(mv);
 			Util.output(s);
 		}while (mv.costGain > 0);
 		

@@ -21,4 +21,13 @@ public abstract class Operator {
 	abstract public double getCostGain(Edge e0, Edge e1);
 
 	abstract public void apply(SolutionGraph sg, Edge e0, Edge e1);
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName();
+	}
+	
+	
 }

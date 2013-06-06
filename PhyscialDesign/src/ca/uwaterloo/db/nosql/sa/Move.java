@@ -14,6 +14,16 @@ public class Move {
 		this.e0 = e0;
 		this.e1 = e1;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		
+		return "Operator: " + operator + " ( " + e0 + " , " + e1 + " )  : CostGain = " + costGain;
+	}
+	
 	
 	
 }

@@ -4,7 +4,6 @@
 package ca.uwaterloo.db.nosql.sa.operator;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import ca.uwaterloo.db.nosql.sa.Edge;
 import ca.uwaterloo.db.nosql.sa.MergedEdge;

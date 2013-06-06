@@ -55,6 +55,11 @@ public class Edge {
 	 * @param from the from to set
 	 */
 	public void setFrom(Node from) {
+		
+		if (this.from != null){
+			this.from.getOutEdges().remove(this);
+		}
+		
 		this.from = from;
 		from.addOutEdge(this);
 	}
@@ -70,6 +75,10 @@ public class Edge {
 	 * @param to the to to set
 	 */
 	public void setTo(Node to) {
+		if (this.to != null){
+			this.to.getInEdges().remove(this);
+		}
+		
 		this.to = to;
 		to.addInEdge(this);
 	}

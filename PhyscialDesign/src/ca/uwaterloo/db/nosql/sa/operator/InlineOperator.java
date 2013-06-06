@@ -35,20 +35,6 @@ public class InlineOperator extends Operator {
 	@Override
 	public double getCostGain(Edge e0, Edge e1) {
 		if (! isElligible(e0, e1)) return 0;
-//		if (e0 != e1){
-//			HashSet<Query> s = new HashSet<Query>(e0.getQueries());
-//			s.retainAll(e1.getQueries());
-//			return s.size();
-//		}else{
-//			int c = 0;
-//			for (Query q : e0.getQueries()) {
-//				int qerc = q.getEdgeReferenceCount(e0);
-//				int eqc = e0.getQueryRefCount(q);
-//				if (qerc/2>=eqc) c+=eqc;
-//			}
-//			
-//			return c;
-//		}
 		int cg = 0;
 		boolean removable = true;
 		 Node b = e0.getTo();
@@ -56,6 +42,11 @@ public class InlineOperator extends Operator {
 		for (Edge  e : b.getOutEdges()) {
 			HashSet<Query> s = new HashSet<Query>(e0.getQueries());
 			s.retainAll(e.getQueries());
+			
+			// If e0 and e has different queries, they cannot be inline.
+			if (s.size() != e.getQueries().size() || s.size() != e0.getQueries().size())
+				return 0;
+			
 			int c = 0;
 			qn = s.size();
 			for (Query q : s) {
