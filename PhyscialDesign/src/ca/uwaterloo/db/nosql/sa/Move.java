@@ -7,9 +7,21 @@ public class Move {
 	double costGain;
 	Operator operator;
 	Edge e0, e1;
+	private double maxCost;
+	private double maxDiskSpace;
 	
 	public Move(double maxGain, Operator op, Edge e0, Edge e1) {
 		this.costGain = maxGain;
+		this.operator = op;
+		this.e0 = e0;
+		this.e1 = e1;
+	}
+
+	public Move(double maxGain, double maxCost, double maxDiskSpace,
+			Operator op, Edge e0, Edge e1) {
+		this.costGain = maxGain;
+		this.maxCost = maxCost;
+		this.maxDiskSpace = maxDiskSpace;
 		this.operator = op;
 		this.e0 = e0;
 		this.e1 = e1;

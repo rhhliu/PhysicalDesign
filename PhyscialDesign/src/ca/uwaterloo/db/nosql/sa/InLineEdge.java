@@ -1,6 +1,7 @@
 package ca.uwaterloo.db.nosql.sa;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,54 +28,32 @@ public class InLineEdge extends Edge {
 		
 		this.e0 = e0;
 		this.e1 = e1;
-		
-
-		//update query reference
-		// qs1 is a subset of qs0
-		Set<Query> qs1 = new HashSet<>(e1.getQueries());
-		//Set<Query> qs1 = e1.getQueries();
-		//intersection
-		//qs0.retainAll(qs1);
-		setQueries(qs1);
-		
-	}
-
-	private InLineEdge() {
-		
 	}
 	
 	
+
+	/* (non-Javadoc)
+	 * @see ca.uwaterloo.db.nosql.sa.Edge#cloneEdge()
+	 */
+	@Override
+	public InLineEdge cloneEdge() {
+		InLineEdge ie = new InLineEdge(e0, e1);
+		return ie;
+	}
+
+
 
 	/* (non-Javadoc)
 	 * @see ca.uwaterloo.db.nosql.sa.Edge#getName()
 	 */
 	@Override
 	public String getName() {
-		return e0.getName() + "_" + e1.getName();
+		if (e1 instanceof MergedEdge)
+			return e0.getName() + "_(" + e1.getName() + ")";
+		else
+			return e0.getName() + "_" + e1.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uwaterloo.db.nosql.sa.Edge#cloneEdge()
-	 */
-	@Override
-	public Edge cloneEdge() {
-		InLineEdge e = new InLineEdge();
-		
-		e.setQueries(this.getQueries());
-		return super.cloneEdge();
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.uwaterloo.db.nosql.sa.Edge#getQueryRefCount(ca.uwaterloo.db.nosql.sa.Query)
-	 */
-	@Override
-	public int getQueryRefCount(Query q) {
-		int r0 = e0.getQueryRefCount(q);
-		int r1 = e1.getQueryRefCount(q);
-		if (r0 == 0 || r1 == 0 ) return 0;
-		
-		return r0 + r1;
-	}
 	
 	public Edge getFirstSubEdge() {
 		
@@ -83,6 +62,13 @@ public class InLineEdge extends Edge {
 	
 	public Edge getLastSubEdge() {
 		return e1.getLastSubEdge();
+	}
+
+
+
+	public void addQueryPaths(Collection<QueryPath> commonPathSet) {
+		this.queryPathSet.addAll(commonPathSet);
+		
 	}
 	
 }

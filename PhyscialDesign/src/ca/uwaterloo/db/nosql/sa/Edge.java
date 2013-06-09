@@ -2,6 +2,7 @@ package ca.uwaterloo.db.nosql.sa;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,13 +18,18 @@ public class Edge {
 	
 	
 	private Node from, to;
-	//private int fromMultiplicity, toMultiplicity;
 	private String name;
-	protected Set<Query> queries = new HashSet<Query>(); 
+	protected Set<QueryPath> queryPathSet = new HashSet<>(); 
+	private boolean isOriginal = false;
 	
-	public Edge(String name){
+	public Edge(String name, boolean isOriginal){
 		this.name = name;
+		this.isOriginal = isOriginal;
 	}
+	
+//	public Edge(String name){
+//		this(name, false);
+//	}
 	
 	protected Edge(){}
 	/**
@@ -43,6 +49,20 @@ public class Edge {
 	}
 
 
+
+	/**
+	 * @return the isOriginal
+	 */
+	public boolean isOriginal() {
+		return isOriginal;
+	}
+
+	/**
+	 * @param isOriginal the isOriginal to set
+	 */
+	public void setOriginal(boolean isOriginal) {
+		this.isOriginal = isOriginal;
+	}
 
 	/**
 	 * @return the from
@@ -87,8 +107,8 @@ public class Edge {
 	/**
 	 * @return the queries
 	 */
-	public Set<Query> getQueries() {
-		return queries;
+	public Set<QueryPath> getQueryPaths() {
+		return queryPathSet;
 	}
 	
 	
@@ -96,8 +116,8 @@ public class Edge {
 	/**
 	 * @param queries the queries to set
 	 */
-	public void setQueries(Set<Query> queries) {
-		this.queries = queries;
+	public void setQueries(Set<QueryPath> queryPath) {
+		this.queryPathSet = queryPath;
 	}
 
 	public String toString(){
@@ -108,12 +128,6 @@ public class Edge {
 		HashMap<Attribute, Attribute> m = new HashMap<>();
 		m.put(from.getAttribute(), to.getAttribute());
 		return m;
-	}
-
-	public Edge cloneEdge() {
-		Edge e = new Edge(name);
-		e.queries = queries;
-		return e;
 	}
 
 	public void removeFrom() {
@@ -129,19 +143,19 @@ public class Edge {
 		
 	}
 
-	public void addQuerys(Query... qs) {
-		this.queries.addAll(Arrays.asList(qs));
+	public void addQueryPaths(QueryPath... qs) {
+		this.queryPathSet.addAll(Arrays.asList(qs));
 	}
 	
-	public void addQuery(Query q){
-		this.queries.add(q);
+	public void addQueryPath(QueryPath qp){
+		this.queryPathSet.add(qp);
 	}
 
-	public int getQueryRefCount(Query q) {
-		if (queries.contains(q))
-			return 1;
-		return 0;
-	}
+//	public int getQueryRefCount(Query q) {
+//		if (queryPath.contains(q))
+//			return 1;
+//		return 0;
+//	}
 
 	public Edge getFirstSubEdge() {
 		
@@ -151,5 +165,26 @@ public class Edge {
 	public Edge getLastSubEdge() {
 		return this;
 	}
+
+	public void removeQueryPath(QueryPath qp) {
+		this.queryPathSet.remove(qp);
+		
+	}
+
+	public Edge cloneEdge() {
+		Edge e = new Edge();
+		e.from = from;
+		e.to = to;
+		e.isOriginal = isOriginal;
+		e.name = name;
+		e.queryPathSet.addAll(queryPathSet);
+		
+		return e;
+	}
+
+	public void removeQueryPaths(Collection<QueryPath> commonPathSet) {
+		this.queryPathSet.removeAll(commonPathSet);
+	}
+
 	
 }

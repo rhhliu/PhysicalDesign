@@ -3,14 +3,14 @@
  */
 package ca.uwaterloo.db.nosql.sa.operator;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import ca.uwaterloo.db.nosql.sa.Edge;
 import ca.uwaterloo.db.nosql.sa.InLineEdge;
 import ca.uwaterloo.db.nosql.sa.MergedEdge;
 import ca.uwaterloo.db.nosql.sa.Node;
-import ca.uwaterloo.db.nosql.sa.Query;
+
+import ca.uwaterloo.db.nosql.sa.QueryPath;
 import ca.uwaterloo.db.nosql.sa.SolutionGraph;
 
 /**
@@ -19,7 +19,7 @@ import ca.uwaterloo.db.nosql.sa.SolutionGraph;
  * 2013-06-01
  * PhyscialDesign
  */
-public class InlineOperator extends Operator {
+public class InlineOperator extends ConsecutiveEdgeOperator {
 
 
 	@Override
@@ -31,40 +31,58 @@ public class InlineOperator extends Operator {
 	public boolean isApplyOnConsecutiveEdges() {
 		return true;
 	}
-
+	
 	@Override
-	public double getCostGain(Edge e0, Edge e1) {
-		if (! isElligible(e0, e1)) return 0;
-		int cg = 0;
-		boolean removable = true;
-		 Node b = e0.getTo();
-		 int qn = 0;
-		for (Edge  e : b.getOutEdges()) {
-			HashSet<Query> s = new HashSet<Query>(e0.getQueries());
-			s.retainAll(e.getQueries());
+	public double getDiskSpaceChange(Edge e0, Edge e1) {
+		
+		// disk space increase
+		Node a = e0.getFrom();
+		Node b = e0.getTo();
+		Node c = e1.getTo();
+		int incrementAttNum = a.getAttributes().size() + c.getAttributes().size();
+	
+		
+		// disk space decrease
+		
+		int decremetnAttNum = 0;
+		
+		
+		Set<QueryPath> commonPathSet = getCommonPath(e0, e1);
+		
+		if (RETAIN_ORIGINAL ){
+			if (!e0.isOriginal() && removeable(e0, commonPathSet))
+				decremetnAttNum += a.getAttributes().size() + b.getAttributes().size();
 			
-			// If e0 and e has different queries, they cannot be inline.
-			if (s.size() != e.getQueries().size() || s.size() != e0.getQueries().size())
-				return 0;
+			if (!e1.isOriginal() && removeable(e1, commonPathSet))
+				decremetnAttNum += b.getAttributes().size() + c.getAttributes().size();
 			
-			int c = 0;
-			qn = s.size();
-			for (Query q : s) {
-				if (q.getEdgeLevel(e0) +1 == q.getEdgeLevel(e.getFirstSubEdge()))
-					c++;
-			}
-			
-			cg += c;
-			
-			if (c != s.size())
-				 removable = false;
+		}else{
+			if (removeable(e0, commonPathSet))
+				decremetnAttNum += a.getAttributes().size() + b.getAttributes().size();
+			if (removeable(e1, commonPathSet))
+				decremetnAttNum += b.getAttributes().size() + c.getAttributes().size();
 		}
-			
-			
-		if (removable)
-			return cg - qn + w * (b.getOutEdges().size() + 1);
-		return 0;
+		
+		return incrementAttNum - decremetnAttNum;
+		
+		
 	}
+
+	private boolean removeable(Edge e0, Set<QueryPath> commonPathSet) {
+		Set<QueryPath> qps = e0.getQueryPaths();
+		if (qps.size() - commonPathSet.size() == 0)
+			return true;
+		return false;
+	}
+
+//
+//	@Override
+//	public double getCostGain(Edge e0, Edge e1) {
+//		if (! isElligible(e0, e1)) return 0;
+//		Set<QueryPath> commonPathSet = getCommonPath(e0, e1);
+//		int n  = getDistQueryNumber(commonPathSet);
+//		return n;
+//	}
 
 	/**
 	 *    a
@@ -82,47 +100,70 @@ public class InlineOperator extends Operator {
 	 */
 	@Override
 	public void apply(SolutionGraph sg, Edge e0, Edge e1) {
-		 Node b = e0.getTo();
-		 for (Edge  e : b.getOutEdges()) {
-			 InLineEdge ie = new InLineEdge(e0, e);
-			 ie.setFrom(e0.getFrom());
-			 ie.setTo(e.getTo());	
-			 
-			 sg.addEdges(ie);
-		}
+		Node a = e0.getFrom();
+		Node b = e0.getTo();
+		Node c = e1.getTo();
 		 
+		 InLineEdge ie = new InLineEdge(e0, e1);
+		 ie.setFrom(a);
+		 ie.setTo(c);	
 		 
+		 // move the query path from e0 and e1 to Inlined edge ie
+		 Set<QueryPath> commonPathSet = getCommonPath(e0, e1);
+		 ie.addQueryPaths(commonPathSet);
+		 e0.removeQueryPaths(commonPathSet);
+		 e1.removeQueryPaths(commonPathSet);
+		 
+		 // add ie to solution grapph.
+		 sg.addEdges(ie);
+
 		 
 		// if e0 and e1 have the same set of queries, remove e0.
 		 
+		 boolean e0Removed = false, e1Removed = false;
 		
-			e0.removeFrom();
-			sg.removeEdge(e0);
-			for (Edge  e : b.getOutEdges()) {
-				e.removeTo();
-				sg.removeEdge(e);
-			}
-			sg.removeNode(b);
+		 if (e0.getQueryPaths().size() == 0 ){
+			 // remove e0
+			 e0.removeFrom();
+			 e0.removeTo();
+			 sg.removeEdge(e0);
+			 e0Removed = true;
+		 }
+		 
+		 if (e1.getQueryPaths().size() == 0){
+			 // remove e0
+			 e1.removeFrom();
+			 e1.removeTo();
+			 sg.removeEdge(e1);
+			 e1Removed = true;
+		 }
+		 
+		 if (e0Removed && e1Removed)
+			 sg.removeNode(b);
+		 
+
+		 super.apply(sg, e0, e1);
 		
 	}
 
 	@Override
 	public boolean isElligible(Edge e0, Edge e1) {
+		if (! super.isElligible(e0, e1)) 
+			return false;
 		// e0 and e1 should be consecutive edges
 		
 		if (e0 instanceof MergedEdge) return false;
 		
 		Node b = e0.getTo();
 		
-		for (Edge e : b.getOutEdges()) {
-			if (e instanceof MergedEdge)
-				return false;
-		}
 		
-		if (e0.getTo().getOutEdges().contains(e1))
-			return true;
-		else
+		if (!e0.getTo().getOutEdges().contains(e1))
 			return false;
+		
+				
+		return true;
 	}
+
+
 
 }

@@ -34,11 +34,11 @@ public class GreedySearch extends Search {
 		do{
 			mv = getBestMove(s, operaterSet);
 			
+			//System.out.println("Operator: ");
+			System.out.println(mv);
 			if (mv.costGain > 0)
 				s.apply(mv);
 			
-			System.out.println("Operator applied: ");
-			System.out.println(mv);
 			Util.output(s);
 		}while (mv.costGain > 0);
 		
@@ -49,7 +49,7 @@ public class GreedySearch extends Search {
 	}
 
 	private Move getBestMove(SolutionGraph s, Set<Operator> ops) {
-		double maxGain = 0;
+		double maxGain = 0, maxCost = 0, maxDiskSpace = 0;
 		Edge maxEdge0 = null, maxEdge1 = null;
 		Operator maxOp = null;
 		
@@ -77,9 +77,13 @@ public class GreedySearch extends Search {
 					
 					if ( !op.isElligible(e0, e1) ) continue;
 					
-					double costGain = op.getCostGain(e0, e1);
+					double cost = op.getCostGain(e0, e1);
+					double diskSpace = op.getDiskSpaceChange(e0, e1);
+					double costGain = cost/(1+diskSpace);
 					if (costGain > maxGain){
 						maxGain = costGain;
+						maxCost = cost;
+						maxDiskSpace= diskSpace;
 						maxEdge0 = e0;
 						maxEdge1 = e1;
 						maxOp = op;
@@ -90,7 +94,7 @@ public class GreedySearch extends Search {
 		}// end of for ops
 		
 		
-		return new Move(maxGain, maxOp, maxEdge0, maxEdge1);
+		return new Move(maxGain, maxCost, maxDiskSpace, maxOp, maxEdge0, maxEdge1);
 	}
 
 	public static void main(String[] args) {

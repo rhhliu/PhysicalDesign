@@ -10,7 +10,7 @@ import ca.uwaterloo.db.nosql.sa.Edge;
 import ca.uwaterloo.db.nosql.sa.GroupNode;
 import ca.uwaterloo.db.nosql.sa.MergedNode;
 import ca.uwaterloo.db.nosql.sa.Node;
-import ca.uwaterloo.db.nosql.sa.Query;
+import ca.uwaterloo.db.nosql.sa.QueryPath;
 import ca.uwaterloo.db.nosql.sa.SolutionGraph;
 
 /**
@@ -18,7 +18,7 @@ import ca.uwaterloo.db.nosql.sa.SolutionGraph;
  * 	University of Waterloo 2013-06-01
  *         PhyscialDesign
  */
-public class GroupOperator extends Operator {
+public class GroupOperator extends ConsecutiveEdgeOperator {
 
 	@Override
 	public boolean isApplyOnSiblingEdges() {
@@ -29,23 +29,43 @@ public class GroupOperator extends Operator {
 	public boolean isApplyOnConsecutiveEdges() {
 		return true;
 	}
+	
 
 	@Override
-	public double getCostGain(Edge e0, Edge e1) {
-		HashSet<Query> s = new HashSet<Query>(e0.getQueries());
-		s.retainAll(e1.getQueries());
-		int c = 0;
-		for (Query q : s) {
-			if (q.getEdgeLevel(e0.getLastSubEdge()) +1 == q.getEdgeLevel(e1.getFirstSubEdge()))
-				c++;
+	public double getDiskSpaceChange(Edge e0, Edge e1) {
+		
+		Node a = e0.getFrom();
+		Node b = e0.getTo();
+		Node c = e1.getTo();
+		int incrementAttNum = a.getAttributes().size() + b.getAttributes().size() + c.getAttributes().size();
+	
+		
+		
+		int decremetnAttNum = 0;
+
+		
+		if (RETAIN_ORIGINAL)
+			decremetnAttNum = 0;
+		else{
+			// if (q0 is contained by q1 ) then b->c (e1) can be removed.
+			if (e0.getQueryPaths().containsAll(e1.getQueryPaths())){
+				decremetnAttNum = (b.getAttributes().size() + c.getAttributes().size());
+			}else
+				decremetnAttNum = 0;
+			
 		}
 		
-		Node b = e0.getTo();
-		if (b.getOutEdges().size()>1) 
-			return 0;
-		
-		return c;
+		return incrementAttNum - decremetnAttNum;
 	}
+
+//	@Override
+//	public double getCostGain(Edge e0, Edge e1) {
+//		
+//		if (! isElligible(e0, e1)) return 0;
+//		Set<QueryPath> commonPathSet = getCommonPath(e0, e1);
+//		int n  = getDistQueryNumber(commonPathSet);
+//		return n;
+//	}
 
 	/**
 	 * Group is applied on two nodes, e0.getTo() and e1.getTo().
@@ -61,7 +81,7 @@ public class GroupOperator extends Operator {
 		if (e0.getTo() instanceof MergedNode || e1.getTo() instanceof MergedNode) 
 			throw new RuntimeException("MergedNode cannot be grouped!");
 		
-		// we do not use e0, but it must exist.
+		
 		GroupNode gNode = new GroupNode(e1);
 		
 		// set e0 to be the in-edge of gNode
@@ -76,13 +96,21 @@ public class GroupOperator extends Operator {
 		
 		sg.addNodes(gNode);
 		
-		sg.removeNode(e1.getFrom());
-		sg.removeNode(e1.getTo());
-		sg.removeEdge(e1);
+		// remove e1;
+		if (e0.getQueryPaths().containsAll(e1.getQueryPaths())  ){
+			sg.removeNode(e1.getFrom());
+			sg.removeNode(e1.getTo());
+			sg.removeEdge(e1);
+		}
+		
+		
+		super.apply(sg, e0, e1);
 	}
 
 	@Override
 	public boolean isElligible(Edge e0, Edge e1) {
+		if (! super.isElligible(e0, e1)) 
+			return false;
 		// e0 and e1 should be consecutive edges
 		if ( !(e0.getTo() instanceof MergedNode ) && !(e1.getTo()instanceof MergedNode) 
 				&& e0.getTo().getOutEdges().contains(e1))
@@ -90,5 +118,6 @@ public class GroupOperator extends Operator {
 		else
 			return false;
 	}
+
 
 }

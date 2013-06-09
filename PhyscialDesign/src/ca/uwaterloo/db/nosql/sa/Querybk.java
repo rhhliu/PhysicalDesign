@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 2013-06-02
  * PhyscialDesign
  */
-public class Query extends Graph{
+public class Querybk extends Graph{
 	
 	public static AtomicInteger counter = new AtomicInteger(0);
 	private Node inputNode;
@@ -24,7 +24,7 @@ public class Query extends Graph{
 	private LinkedHashMap<Edge, Integer> edges = new LinkedHashMap<>();
 	private Map<Edge, Integer> levelmap = new HashMap<>();
 
-	public Query(String name) {
+	public Querybk(String name) {
 		this.name = name;
 	}
 
@@ -71,7 +71,7 @@ public class Query extends Graph{
 			edges.put(e, 1);
 		}
 		
-		e.addQuery(this);
+	//	e.addQueryPath(this);
 		
 	}
 	

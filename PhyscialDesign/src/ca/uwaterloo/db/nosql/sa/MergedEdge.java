@@ -38,19 +38,11 @@ public class MergedEdge extends Edge{
 	 * @see ca.uwaterloo.db.nosql.sa.Edge#cloneEdge()
 	 */
 	@Override
-	public Edge cloneEdge() {
-		throw new RuntimeException("Not supported yet!");
+	public MergedEdge cloneEdge() {
+		MergedEdge me = new MergedEdge(e0, e1);
+		return me;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.uwaterloo.db.nosql.sa.Edge#getQueryRefCount(ca.uwaterloo.db.nosql.sa.Query)
-	 */
-	@Override
-	public int getQueryRefCount(Query q) {
-		int r0 = e0.getQueryRefCount(q);
-		int r1 = e1.getQueryRefCount(q);
-		return Math.max(r0 , r1);
-	}
 	
 	public Edge getFirstSubEdge() {
 		
