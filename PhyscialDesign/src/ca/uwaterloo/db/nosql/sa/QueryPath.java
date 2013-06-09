@@ -30,8 +30,10 @@ public class QueryPath {
 	}
 
 	public boolean isNeighbor(Edge e0, Edge e1) {
-		int i0 = edgeList.indexOf(e0);
-		int i1 = edgeList.indexOf(e1.getFirstSubEdge());
+		Edge se0 = e0.getFirstSubEdge();
+		int i0 = edgeList.indexOf(se0);
+		Edge ee = e1.getFirstSubEdge();
+		int i1 = edgeList.indexOf(ee);
 		
 		if (i0 == -1 || i1 == -1) 
 			return false;

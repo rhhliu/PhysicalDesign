@@ -46,16 +46,31 @@ public class MergeOperator extends Operator {
 		
 		int incr = a.getAttributes().size() + b.getAttributes().size() + c.getAttributes().size();
 		
+		for (Edge e : b.getOutEdges()){
+			incr += b.getAttributes().size() + e.getTo().getAttributes().size();
+		}
+		for (Edge e : c.getOutEdges()){
+			incr += c.getAttributes().size() + e.getTo().getAttributes().size();
+		}
+		
+		
+		
 		int decr = 0;
 		
 		Set<Query2> commonQuerySet = getCommonQuerySet(e0, e1);
 		
 		if (removeable(e0, commonQuerySet) && ( ! RETAIN_ORIGINAL || !e0.isOriginal())){
 			decr += a.getAttributes().size() + b.getAttributes().size();
+			for (Edge e : b.getOutEdges()){
+				decr += b.getAttributes().size() + e.getTo().getAttributes().size();
+			}
 		}
 		
 		if (removeable(e1, commonQuerySet) && ( ! RETAIN_ORIGINAL || !e1.isOriginal())){
 			decr += a.getAttributes().size() + c.getAttributes().size();
+			for (Edge e : c.getOutEdges()){
+				decr += c.getAttributes().size() + e.getTo().getAttributes().size();
+			}
 		}
 		
 		return incr - decr;
@@ -165,8 +180,9 @@ public class MergeOperator extends Operator {
 				ee.removeFrom();
 				ee.removeTo();
 				sg.removeEdge(ee);
-
-				for (Edge e : n.getOutEdges()){
+				
+				Set<Edge> edgeToRemove = new HashSet<>(n.getOutEdges());
+				for (Edge e : edgeToRemove){
 					e.removeTo();
 					e.removeFrom();
 					sg.removeEdge(e);
@@ -189,12 +205,16 @@ public class MergeOperator extends Operator {
 		
 		while (it0.hasNext()){
 			QueryPath qp0 = it0.next();
+			boolean removed = false;
 			
 			Iterator<QueryPath> it1 = qpSet1.iterator();
 			while (it1.hasNext()){
 				QueryPath qp1 = it1.next();
 				if (qp0.getQuery() == qp1.getQuery() && qp0.prefix(e0).equals(qp1.prefix(e1))){
-					it0.remove();
+					if (!removed) {
+						it0.remove();
+						removed = true;
+					}
 					it1.remove();
 					mergedEdge.addQueryPaths(qp0, qp1);
 				}

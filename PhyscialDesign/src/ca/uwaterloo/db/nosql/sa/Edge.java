@@ -186,5 +186,15 @@ public class Edge {
 		this.queryPathSet.removeAll(commonPathSet);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		Edge ee = (Edge)obj;
+		return this.getName().equals(ee.getName());
+	}
+
+	
 	
 }

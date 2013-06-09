@@ -152,7 +152,7 @@ public class InlineOperator extends ConsecutiveEdgeOperator {
 			return false;
 		// e0 and e1 should be consecutive edges
 		
-		if (e0 instanceof MergedEdge) return false;
+		//if (e0 instanceof MergedEdge) return false;
 		
 		Node b = e0.getTo();
 		
