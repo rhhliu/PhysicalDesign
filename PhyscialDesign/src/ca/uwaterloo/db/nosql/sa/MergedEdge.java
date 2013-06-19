@@ -51,4 +51,6 @@ public class MergedEdge extends Edge{
 	public Edge getLastSubEdge() {
 		return e0.getLastSubEdge();
 	}
+
+
 }

@@ -11,8 +11,9 @@ import ca.uwaterloo.db.nosql.sa.Edge;
 import ca.uwaterloo.db.nosql.sa.MergedEdge;
 import ca.uwaterloo.db.nosql.sa.MergedNode;
 import ca.uwaterloo.db.nosql.sa.Node;
-import ca.uwaterloo.db.nosql.sa.Query2;
+import ca.uwaterloo.db.nosql.sa.Query;
 import ca.uwaterloo.db.nosql.sa.QueryPath;
+import ca.uwaterloo.db.nosql.sa.Update;
 
 import ca.uwaterloo.db.nosql.sa.SolutionGraph;
 
@@ -57,7 +58,7 @@ public class MergeOperator extends Operator {
 		
 		int decr = 0;
 		
-		Set<Query2> commonQuerySet = getCommonQuerySet(e0, e1);
+		Set<Query> commonQuerySet = getCommonQuerySet(e0, e1);
 		
 		if (removeable(e0, commonQuerySet) && ( ! RETAIN_ORIGINAL || !e0.isOriginal())){
 			decr += a.getAttributes().size() + b.getAttributes().size();
@@ -76,23 +77,24 @@ public class MergeOperator extends Operator {
 		return incr - decr;
 	}
 	
-	private Set<Query2> getCommonQuerySet(Edge e0, Edge e1) {
-		Set<Query2> commonSet = new HashSet<>();
+	private Set<Query> getCommonQuerySet(Edge e0, Edge e1) {
+		Set<Query> commonSet = new HashSet<>();
 
 		Set<QueryPath> qpSet0 = e0.getQueryPaths();
 		Set<QueryPath> qpSet1 = e1.getQueryPaths();
 		for (QueryPath qp0 : qpSet0) {
 			for (QueryPath qp1 : qpSet1) {
 				if (qp0.getQuery() == qp1.getQuery() && qp0.prefix(e0).equals(qp1.prefix(e1))){
-					commonSet.add(qp0.getQuery());
+					//if(!qp0.getQuery().isUpdate())
+						commonSet.add(qp0.getQuery());
 				}
 			}
 		}
 		return commonSet;
 	}
 
-	private boolean removeable(Edge e0, Set<Query2> commonPaths) {
-		if (e0.getQueryPaths().size() - commonPaths.size() == 0)
+	private boolean removeable(Edge e0, Set<Query> commonQuerySet) {
+		if (e0.getQueryPaths().size() - commonQuerySet.size() == 0)
 			return true;
 		else 
 			return false;
@@ -108,7 +110,11 @@ public class MergeOperator extends Operator {
 		
 		if (! isElligible(e0, e1)) return 0;
 		
-		Set<Query2> commonQuerySet = getCommonQuerySet(e0, e1);
+		// common (intersection) queries on e0, and e1 will be moved to
+		// the new merged edge, and therefore, the cost reduced.
+		Set<Query> commonQuerySet = getCommonQuerySet(e0, e1);
+		
+		// update 
 		
 		return commonQuerySet.size();
 	}
@@ -164,19 +170,20 @@ public class MergeOperator extends Operator {
 		
 
 		// See if we need to remove node b and c
-		tryRemove(sg, e0);
-		tryRemove(sg, e1);
+		tryRemove(sg, e0, me);
+		tryRemove(sg, e1, me);
 		
 		
 		// update opIndex
 		super.apply(sg, e0, e1);
 	}
 
-	private void tryRemove(SolutionGraph sg, Edge ee) {
+	private void tryRemove(SolutionGraph sg, Edge ee, MergedEdge me) {
 		Node n = ee.getTo();
 		
 //		if (! RETAIN_ORIGINAL || !ee.isOriginal()){
-			if (ee.getQueryPaths().size() == 0){
+			if (ee.getQueryOnlyPaths().size() == 0 
+					&& me.getUpdatePaths().containsAll(ee.getUpdatePaths())){
 				ee.removeFrom();
 				ee.removeTo();
 				sg.removeEdge(ee);
@@ -211,11 +218,15 @@ public class MergeOperator extends Operator {
 			while (it1.hasNext()){
 				QueryPath qp1 = it1.next();
 				if (qp0.getQuery() == qp1.getQuery() && qp0.prefix(e0).equals(qp1.prefix(e1))){
-					if (!removed) {
-						it0.remove();
-						removed = true;
+					
+					if (! qp0.getQuery().isUpdate()){
+						if (!removed) {
+							
+							it0.remove();
+							removed = true;
+						}
+						it1.remove();
 					}
-					it1.remove();
 					mergedEdge.addQueryPaths(qp0, qp1);
 				}
 			}

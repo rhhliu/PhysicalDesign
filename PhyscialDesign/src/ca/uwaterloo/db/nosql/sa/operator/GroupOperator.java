@@ -10,6 +10,7 @@ import ca.uwaterloo.db.nosql.sa.Edge;
 import ca.uwaterloo.db.nosql.sa.GroupNode;
 import ca.uwaterloo.db.nosql.sa.MergedNode;
 import ca.uwaterloo.db.nosql.sa.Node;
+import ca.uwaterloo.db.nosql.sa.Query;
 import ca.uwaterloo.db.nosql.sa.QueryPath;
 import ca.uwaterloo.db.nosql.sa.SolutionGraph;
 
@@ -18,7 +19,7 @@ import ca.uwaterloo.db.nosql.sa.SolutionGraph;
  * 	University of Waterloo 2013-06-01
  *         PhyscialDesign
  */
-public class GroupOperator extends ConsecutiveEdgeOperator {
+public class GroupOperator extends Operator {
 
 	@Override
 	public boolean isApplyOnSiblingEdges() {
@@ -28,6 +29,16 @@ public class GroupOperator extends ConsecutiveEdgeOperator {
 	@Override
 	public boolean isApplyOnConsecutiveEdges() {
 		return true;
+	}
+	
+	@Override
+	public double getCostGain(Edge e0, Edge e1) {
+		
+		if (! isElligible(e0, e1)) return 0;
+//		Set<QueryPath> commonPathSet = getCommonPath(e0, e1);
+//		int n  = getDistQueryNumber(commonPathSet);
+		
+		return 	e0.getQuerySet().size();
 	}
 	
 
@@ -44,9 +55,13 @@ public class GroupOperator extends ConsecutiveEdgeOperator {
 		int decremetnAttNum = 0;
 
 		
-		if (RETAIN_ORIGINAL)
+		if (RETAIN_ORIGINAL){
+			
+			//TODO
 			decremetnAttNum = 0;
-		else{
+			
+		
+		}else{
 			// if (q0 is contained by q1 ) then b->c (e1) can be removed.
 			if (e0.getQueryPaths().containsAll(e1.getQueryPaths())){
 				decremetnAttNum = (b.getAttributes().size() + c.getAttributes().size());
@@ -111,13 +126,53 @@ public class GroupOperator extends ConsecutiveEdgeOperator {
 	public boolean isElligible(Edge e0, Edge e1) {
 		if (! super.isElligible(e0, e1)) 
 			return false;
+		
+		Node b = e0.getTo();
+		Node c = e1.getTo();
+		
 		// e0 and e1 should be consecutive edges
-		if ( !(e0.getTo() instanceof MergedNode ) && !(e1.getTo()instanceof MergedNode) 
-				&& e0.getTo().getOutEdges().contains(e1))
-			return true;
-		else
+		if ( (b instanceof MergedNode ) || (c instanceof MergedNode) 
+				|| ! b.getOutEdges().contains(e1))
 			return false;
+		
+		//if e1 has update not in e0. it is not elliglible
+		Set<QueryPath> uSet1 = new HashSet<>(e1.getUpdatePaths());
+		Set<QueryPath> uSet0 = e0.getUpdatePaths();
+		uSet1.removeAll(uSet0);
+		
+		if (!uSet1.isEmpty())
+			return false;
+		
+		return true;
 	}
+	
+	protected Set<QueryPath> getCommonPath(Edge e0, Edge e1) {
+		Set<QueryPath> commonpathSet = new HashSet<>();
+		Set<QueryPath> qpSet = e0.getQueryPaths();
+		 
+		for (QueryPath qp : qpSet) {
+			if (e1.getQueryPaths().contains(qp)  && qp.isNeighbor(e0, e1)){
+				commonpathSet.add(qp);
+			}
+		}
+		return commonpathSet;
+	}
+
+	protected int getDistQueryNumber(Set<QueryPath> commonPathSet) {
+		HashSet<Query> qSet = new HashSet<>();
+		
+		int count = 0;
+		for (QueryPath qp : commonPathSet) {
+			Query query = qp.getQuery();
+			if (!qSet.contains(query)){
+				qSet.add(query);
+				count ++;
+			}
+		}
+		return count;
+	}
+	
+
 
 
 }

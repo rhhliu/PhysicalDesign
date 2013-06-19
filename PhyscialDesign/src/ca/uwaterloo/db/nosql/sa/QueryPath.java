@@ -7,7 +7,7 @@ import java.util.List;
 
 public class QueryPath {
 	private List<Edge> edgeList = new ArrayList<>();
-	private Query2 query;
+	private Query query;
 
 	public void addEdges(Edge... edges) {
 
@@ -18,14 +18,14 @@ public class QueryPath {
 		}
 	}
 
-	public void setQuery(Query2 query) {
+	public void setQuery(Query query) {
 		this.query = query;
 	}
 
 	/**
 	 * @return the query
 	 */
-	public Query2 getQuery() {
+	public Query getQuery() {
 		return query;
 	}
 

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -112,6 +113,33 @@ public class Edge {
 	}
 	
 	
+	/**
+	 * Returns query only paths
+	 * @return
+	 */
+	public Set<QueryPath> getQueryOnlyPaths() {
+		
+		Set<QueryPath> queryOnlySet = new HashSet<>();
+		Iterator<QueryPath> it = queryPathSet.iterator();
+		while (it.hasNext()){
+			QueryPath qp = it.next();
+			if (!qp.getQuery().isUpdate())
+				queryOnlySet.add(qp);
+		}
+		
+		return queryOnlySet;
+	}
+	public Set<QueryPath> getUpdatePaths() {
+		Set<QueryPath> updatePathSet = new HashSet<>();
+		Iterator<QueryPath> it = queryPathSet.iterator();
+		while (it.hasNext()){
+			QueryPath qp = it.next();
+			if (qp.getQuery().isUpdate())
+				updatePathSet.add(qp);
+		}
+		
+		return updatePathSet;
+	}
 
 	/**
 	 * @param queries the queries to set
@@ -193,6 +221,26 @@ public class Edge {
 	public boolean equals(Object obj) {
 		Edge ee = (Edge)obj;
 		return this.getName().equals(ee.getName());
+	}
+
+	public QueryPath getQueryPath(Query q) {
+		for (QueryPath p : this.queryPathSet) {
+			if (p.getQuery() == q)
+				return p;
+		}
+		return null;
+	}
+
+	public Set<Query> getQuerySet() {
+
+		Set<Query> qSet = new HashSet<>();
+		Iterator<QueryPath> it = queryPathSet.iterator();
+		while (it.hasNext()){
+			QueryPath qp = it.next();
+			qSet.add(qp.getQuery());
+		}
+		
+		return qSet;
 	}
 
 	

@@ -33,7 +33,9 @@ public class Move {
 	@Override
 	public String toString() {
 		
-		return "Operator: " + operator + " ( " + e0 + " , " + e1 + " )  : CostGain = " + costGain;
+		return "Operator: " + operator + " ( " + e0 + " , " + e1 + " )  : CostGain = " + costGain
+				+ " :  cost imprv = " + this.maxCost 
+				+ " :  space = " + this.maxDiskSpace;
 	}
 	
 	

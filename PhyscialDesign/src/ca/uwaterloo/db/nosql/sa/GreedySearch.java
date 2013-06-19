@@ -79,7 +79,7 @@ public class GreedySearch extends Search {
 					
 					double cost = op.getCostGain(e0, e1);
 					double diskSpace = op.getDiskSpaceChange(e0, e1);
-					double costGain = cost /(5+ diskSpace);
+					double costGain = cost /(6+ diskSpace);
 					if (costGain > maxGain){
 						maxGain = costGain;
 						maxCost = cost;

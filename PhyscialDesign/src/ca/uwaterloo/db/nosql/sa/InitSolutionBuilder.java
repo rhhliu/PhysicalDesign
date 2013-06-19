@@ -29,6 +29,11 @@ public class InitSolutionBuilder {
 		upass.setFrom(uid);
 		upass.setTo(pass);
 		
+		Node name = new Node("name", Type.TEXT);
+		Edge uname = new Edge("name", true);
+		uname.setFrom(uid);
+		uname.setTo(name);
+		
 		Node tid = new Node("tid", Type.INT);
 		
 		Edge author = new Edge("author", true);
@@ -55,7 +60,7 @@ public class InitSolutionBuilder {
 		QueryPath tlp2 = new QueryPath();
 		tlp2.addEdges(follows, author, twts);
 		
-		Query2 timeLineQuery = new Query2("Timeline");
+		Query timeLineQuery = new Query("Timeline");
 		timeLineQuery.addQueryPaths(tlp1, tlp2);
 		
 		QueryPath ulp1 = new QueryPath();
@@ -63,18 +68,21 @@ public class InitSolutionBuilder {
 		
 		QueryPath ulp2 = new QueryPath();
 		ulp2.addEdges(author, twts);
-		Query2 userLineQuery = new Query2("Userline");
+		Query userLineQuery = new Query("Userline");
 		userLineQuery.addQueryPaths( ulp1, ulp2);
 		
 
-		QueryPath passPath = new QueryPath();
-		passPath.addEdges(upass);
-		Query2 passwordQuery = new Query2("Password");
-		passwordQuery.addQueryPaths(passPath);
+		QueryPath passPath1 = new QueryPath();
+		passPath1.addEdges(upass);
+		
+		QueryPath passPath2 = new QueryPath();
+		passPath2.addEdges(uname);
+		Query passwordQuery = new Query("UserInfor");
+		passwordQuery.addQueryPaths(passPath1, passPath2);
 
 		QueryPath fllPath = new QueryPath();
 		fllPath.addEdges(lead);
-		Query2 followersQuery = new Query2("Followers");
+		Query followersQuery = new Query("Followers");
 		followersQuery.addQueryPaths(fllPath);
 		
 		return sg;

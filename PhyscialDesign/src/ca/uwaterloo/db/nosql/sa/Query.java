@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Query2 {
+public class Query {
 	private String name;
 
-	public Query2(String name) {
+	public Query(String name) {
 		this.name = name;
 	}
 	
@@ -20,5 +20,9 @@ public class Query2 {
 	}
 
 	private Set<QueryPath> pathSet = new HashSet<>();
+
+	public boolean isUpdate() {
+		return false;
+	}
 	
 }
